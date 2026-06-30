@@ -25,7 +25,7 @@ const ACCOUNT_VARIABLES = [
         { label: 'CAD', count: 1300 },
         { label: 'AUD', count: 403 },
     ] },
-    { id: 'v8', name: 'Account Description', type: 'text', selected: true, action: 'Text Clustering' },
+    { id: 'v8', name: 'Account Description', type: 'text', isLargeText: true, avgChars: 2400, selected: true, action: 'Semantic Clustering' },
     { id: 'v9', name: 'Account Fax', type: 'text' },
     { id: 'v10', name: 'Account ID', type: 'text' },
     { id: 'v11', name: 'Account Name', type: 'text' },
@@ -68,6 +68,8 @@ const ACCOUNT_VARIABLES = [
         { label: 'Education', count: 1100 },
     ] },
     { id: 'v23', name: 'Last Modified By ID', type: 'text' },
+    { id: 'v26', name: 'Support Notes', type: 'text', isLargeText: true, avgChars: 3100, selected: true, action: 'Semantic Clustering' },
+    { id: 'v27', name: 'Sales Engagement Log', type: 'text', isLargeText: true, avgChars: 1850 },
 ];
 
 const DATA_MODEL_OBJECTS = [
@@ -99,24 +101,27 @@ export default class ClusterBuilder extends LightningElement {
     @track variableSearchTerm = '';
     @track showOnlySelected = false;
     @track accountSectionOpen = true;
-    @track selectedVariableIds = new Set(['v2', 'v8', 'v20', 'v21', 'v24', 'v25']);
+    @track selectedVariableIds = new Set(['v2', 'v8', 'v20', 'v21', 'v24', 'v25', 'v26']);
     @track variableActions = {
         v2: 'Replace Missing Values',
-        v8: 'Text Clustering',
+        v8: 'Semantic Clustering',
         v20: 'Group by Day',
         v21: 'Group by Month',
         v24: 'Group by Month',
         v25: 'Group by Month',
+        v26: 'Semantic Clustering',
     };
     @track activeVariableId = null;
     @track variableTransformations = {
         v2: 'replace-missing',
-        v8: 'text-clustering',
+        v8: 'semantic-clustering',
         v20: 'group-by-day',
         v21: 'group-by-month',
         v24: 'group-by-month',
         v25: 'group-by-month',
+        v26: 'semantic-clustering',
     };
+    @track autoAppliedSemantic = new Set(['v8', 'v26']);
     @track variableReplaceWith = { v2: 'average' };
     @track variableGroupBy = { v2: 'account-name' };
     @track variableBuckets = {};
@@ -222,6 +227,28 @@ export default class ClusterBuilder extends LightningElement {
         return this.numberOfClusters >= 10;
     }
 
+    get semanticUsedCount() {
+        return Object.values(this.variableTransformations).filter((v) => v === 'semantic-clustering').length;
+    }
+
+    get semanticBudgetMax() {
+        return Labels.SemanticBudgetMax;
+    }
+
+    get semanticBudgetText() {
+        return `${Labels.SemanticBudgetLabel}: ${this.semanticUsedCount} of ${this.semanticBudgetMax} used`;
+    }
+
+    get semanticBudgetReached() {
+        return this.semanticUsedCount >= this.semanticBudgetMax;
+    }
+
+    get semanticBudgetClass() {
+        return this.semanticBudgetReached
+            ? 'semantic-budget semantic-budget_full'
+            : 'semantic-budget';
+    }
+
     get filteredVariables() {
         const term = this.variableSearchTerm.toLowerCase();
         return ACCOUNT_VARIABLES.filter((v) => {
@@ -233,10 +260,14 @@ export default class ClusterBuilder extends LightningElement {
             let iconName = 'utility:text';
             if (v.type === 'number') iconName = 'utility:number_input';
             else if (v.type === 'date') iconName = 'utility:event';
+            if (v.isLargeText) iconName = 'utility:richtextindent';
+            const isAuto = this.autoAppliedSemantic.has(v.id) && this.variableTransformations[v.id] === 'semantic-clustering';
             return {
                 ...v,
                 isSelected,
                 action: this.variableActions[v.id] || null,
+                actionClass: isAuto ? 'var-action-btn var-action-btn_auto' : 'var-action-btn',
+                showAutoBadge: isAuto,
                 iconName,
                 rowClass: isSelected ? 'var-row var-row_selected' : 'var-row',
             };
@@ -286,9 +317,19 @@ export default class ClusterBuilder extends LightningElement {
         const v = this.activeVariable;
         if (!v) return [];
         if (v.type === 'text') {
+            const currentValue = this.activeTransformation;
+            const semanticLocked = this.semanticBudgetReached && currentValue !== 'semantic-clustering' && currentValue !== 'text-clustering';
+            const textLocked = this.semanticBudgetReached && currentValue !== 'text-clustering' && currentValue !== 'semantic-clustering';
             return [
                 { label: Labels.TransformationNone, value: 'none' },
-                { label: Labels.TransformationTextClustering, value: 'text-clustering' },
+                {
+                    label: `${Labels.TransformationTextClustering}${textLocked ? ' (Locked)' : ''}`,
+                    value: 'text-clustering',
+                },
+                {
+                    label: `${Labels.TransformationSemanticClustering}${semanticLocked ? ' (Locked)' : ''}`,
+                    value: 'semantic-clustering',
+                },
             ];
         }
         if (v.type === 'date') {
@@ -301,6 +342,35 @@ export default class ClusterBuilder extends LightningElement {
             { label: Labels.TransformationNone, value: 'none' },
             { label: Labels.TransformationReplaceMissing, value: 'replace-missing' },
         ];
+    }
+
+    get showSemanticGroupHint() {
+        const v = this.activeVariable;
+        return !!v && v.type === 'text';
+    }
+
+    get semanticGroupHintText() {
+        return `${Labels.SemanticGroupHeader} — ${this.semanticUsedCount}/${this.semanticBudgetMax} used`;
+    }
+
+    get isActiveSemanticLocked() {
+        const v = this.activeVariable;
+        if (!v || v.type !== 'text') return false;
+        const current = this.activeTransformation;
+        return this.semanticBudgetReached && current !== 'semantic-clustering';
+    }
+
+    get semanticLockedHint() {
+        return Labels.SemanticLockedHint;
+    }
+
+    get isAutoApplied() {
+        if (!this.activeVariableId) return false;
+        return this.autoAppliedSemantic.has(this.activeVariableId) && this.activeTransformation === 'semantic-clustering';
+    }
+
+    get autoAppliedTooltip() {
+        return Labels.AutoAppliedTooltip;
     }
 
     get isActiveVariableNumber() {
@@ -577,6 +647,9 @@ export default class ClusterBuilder extends LightningElement {
         const trans = { ...this.variableTransformations };
         delete trans[id];
         this.variableTransformations = trans;
+        const auto = new Set(this.autoAppliedSemantic);
+        auto.delete(id);
+        this.autoAppliedSemantic = auto;
         if (this.activeVariableId === id) {
             this.activeVariableId = null;
         }
@@ -600,6 +673,16 @@ export default class ClusterBuilder extends LightningElement {
         const trans = { ...this.variableTransformations };
         const actions = { ...this.variableActions };
         const next = new Set(this.selectedVariableIds);
+        const auto = new Set(this.autoAppliedSemantic);
+        const prevValue = trans[id];
+
+        if (value === 'semantic-clustering' && prevValue !== 'semantic-clustering') {
+            const used = Object.values(trans).filter((t) => t === 'semantic-clustering').length;
+            if (used >= Labels.SemanticBudgetMax) {
+                return;
+            }
+        }
+
         if (value === 'none') {
             delete trans[id];
             delete actions[id];
@@ -608,13 +691,20 @@ export default class ClusterBuilder extends LightningElement {
             trans[id] = value;
             if (value === 'replace-missing') actions[id] = Labels.TransformationReplaceMissing;
             else if (value === 'text-clustering') actions[id] = Labels.TransformationTextClustering;
+            else if (value === 'semantic-clustering') actions[id] = Labels.TransformationSemanticClustering;
             else if (value === 'group-by-month') actions[id] = Labels.TransformationGroupByMonth;
             else if (value === 'group-by-day') actions[id] = Labels.TransformationGroupByDay;
             next.add(id);
         }
+
+        if (value !== 'semantic-clustering') {
+            auto.delete(id);
+        }
+
         this.variableTransformations = trans;
         this.variableActions = actions;
         this.selectedVariableIds = next;
+        this.autoAppliedSemantic = auto;
     }
 
     handleReplaceWithChange(event) {

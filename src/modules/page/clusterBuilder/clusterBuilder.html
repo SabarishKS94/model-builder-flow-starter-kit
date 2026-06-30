@@ -384,6 +384,10 @@
                         <div class="prepare-toolbar-left">
                             <lightning-button label={labels.ShowOnlySelected} variant={showOnlySelectedVariant} onclick={handleToggleShowOnlySelected}></lightning-button>
                             <span class="prepare-summary">{selectedSummary}</span>
+                            <span class={semanticBudgetClass} title={semanticBudgetText}>
+                                <lightning-icon icon-name="utility:magicwand" size="xx-small" class="semantic-budget-icon"></lightning-icon>
+                                <span class="semantic-budget-text">{semanticBudgetText}</span>
+                            </span>
                         </div>
                         <div class="prepare-toolbar-right">
                             <lightning-input
@@ -424,7 +428,12 @@
                                         </div>
                                         <div class="var-cell var-cell_settings">
                                             <template lwc:if={v.action}>
-                                                <lightning-button label={v.action} variant="neutral" class="var-action-btn" data-id={v.id} onclick={handleVariableNameClick}></lightning-button>
+                                                <button type="button" class={v.actionClass} data-id={v.id} onclick={handleVariableNameClick} title={autoAppliedTooltip}>
+                                                    <span class="var-action-label">{v.action}</span>
+                                                    <template lwc:if={v.showAutoBadge}>
+                                                        <span class="var-auto-badge">{labels.SemanticAutoBadge}</span>
+                                                    </template>
+                                                </button>
                                                 <lightning-button-icon icon-name="utility:delete" variant="bare" size="small" alternative-text="Remove" data-id={v.id} onclick={handleRemoveVariable}></lightning-button-icon>
                                             </template>
                                         </div>
@@ -456,12 +465,27 @@
                                         <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
                                     </span>
                                 </div>
+                                <template lwc:if={isAutoApplied}>
+                                    <div class="auto-applied-notice">
+                                        <lightning-icon icon-name="utility:magicwand" size="xx-small" class="auto-applied-icon"></lightning-icon>
+                                        <span class="auto-applied-text">{autoAppliedTooltip}</span>
+                                    </div>
+                                </template>
+                                <template lwc:if={showSemanticGroupHint}>
+                                    <div class="semantic-group-hint">{semanticGroupHintText}</div>
+                                </template>
                                 <lightning-combobox
                                     variant="label-hidden"
                                     value={activeTransformation}
                                     options={transformationOptions}
                                     onchange={handleTransformationChange}
                                 ></lightning-combobox>
+                                <template lwc:if={isActiveSemanticLocked}>
+                                    <div class="semantic-locked-hint">
+                                        <lightning-icon icon-name="utility:lock" size="xx-small" class="semantic-locked-icon"></lightning-icon>
+                                        <span>{semanticLockedHint}</span>
+                                    </div>
+                                </template>
                             </div>
 
                             <template lwc:if={showReplaceMissingOptions}>
