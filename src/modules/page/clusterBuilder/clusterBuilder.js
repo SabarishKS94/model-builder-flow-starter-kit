@@ -101,24 +101,14 @@ export default class ClusterBuilder extends LightningElement {
     @track variableSearchTerm = '';
     @track showOnlySelected = false;
     @track accountSectionOpen = true;
-    @track selectedVariableIds = new Set(['v2', 'v8', 'v20', 'v21', 'v24', 'v25', 'v26']);
+    @track selectedVariableIds = new Set(['v8', 'v26']);
     @track variableActions = {
-        v2: 'Replace Missing Values',
         v8: 'Semantic Clustering',
-        v20: 'Group by Day',
-        v21: 'Group by Month',
-        v24: 'Group by Month',
-        v25: 'Group by Month',
         v26: 'Semantic Clustering',
     };
     @track activeVariableId = null;
     @track variableTransformations = {
-        v2: 'replace-missing',
         v8: 'semantic-clustering',
-        v20: 'group-by-day',
-        v21: 'group-by-month',
-        v24: 'group-by-month',
-        v25: 'group-by-month',
         v26: 'semantic-clustering',
     };
     @track autoAppliedSemantic = new Set(['v8', 'v26']);
@@ -262,13 +252,15 @@ export default class ClusterBuilder extends LightningElement {
             else if (v.type === 'date') iconName = 'utility:event';
             if (v.isLargeText) iconName = 'utility:richtextindent';
             const isAuto = this.autoAppliedSemantic.has(v.id) && this.variableTransformations[v.id] === 'semantic-clustering';
+            const action = this.variableActions[v.id] || null;
             return {
                 ...v,
                 isSelected,
-                action: this.variableActions[v.id] || null,
-                actionClass: isAuto ? 'var-action-btn var-action-btn_auto' : 'var-action-btn',
-                showAutoBadge: isAuto,
+                action,
+                actionLabel: action,
+                actionVariant: isAuto ? 'brand-outline' : 'neutral',
                 iconName,
+                showLargeTextInfo: !!v.isLargeText,
                 rowClass: isSelected ? 'var-row var-row_selected' : 'var-row',
             };
         });

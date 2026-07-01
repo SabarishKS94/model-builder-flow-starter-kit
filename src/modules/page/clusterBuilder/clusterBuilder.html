@@ -425,16 +425,16 @@
                                         <div class="var-cell var-cell_variable">
                                             <lightning-icon icon-name={v.iconName} size="xx-small" variant="bare" class="var-type-icon"></lightning-icon>
                                             <a href="#" class="var-name" data-id={v.id} onclick={handleVariableNameClick}>{v.name}</a>
+                                            <template lwc:if={v.showLargeTextInfo}>
+                                                <lightning-helptext content={labels.LargeTextInfoTooltip} icon-name="utility:info" class="var-large-text-info"></lightning-helptext>
+                                            </template>
                                         </div>
                                         <div class="var-cell var-cell_settings">
                                             <template lwc:if={v.action}>
-                                                <button type="button" class={v.actionClass} data-id={v.id} onclick={handleVariableNameClick} title={autoAppliedTooltip}>
-                                                    <span class="var-action-label">{v.action}</span>
-                                                    <template lwc:if={v.showAutoBadge}>
-                                                        <span class="var-auto-badge">{labels.SemanticAutoBadge}</span>
-                                                    </template>
-                                                </button>
-                                                <lightning-button-icon icon-name="utility:delete" variant="bare" size="small" alternative-text="Remove" data-id={v.id} onclick={handleRemoveVariable}></lightning-button-icon>
+                                                <lightning-button-group class="var-action-group">
+                                                    <lightning-button label={v.actionLabel} variant={v.actionVariant} data-id={v.id} onclick={handleVariableNameClick} title={autoAppliedTooltip}></lightning-button>
+                                                    <lightning-button-icon icon-name="utility:delete" variant="border-filled" size="medium" alternative-text="Remove" data-id={v.id} onclick={handleRemoveVariable}></lightning-button-icon>
+                                                </lightning-button-group>
                                             </template>
                                         </div>
                                     </div>
@@ -466,13 +466,14 @@
                                     </span>
                                 </div>
                                 <template lwc:if={isAutoApplied}>
-                                    <div class="auto-applied-notice">
-                                        <lightning-icon icon-name="utility:magicwand" size="xx-small" class="auto-applied-icon"></lightning-icon>
-                                        <span class="auto-applied-text">{autoAppliedTooltip}</span>
+                                    <div class="auto-applied-notice" role="status">
+                                        <lightning-icon icon-name="utility:magicwand" size="x-small" class="auto-applied-icon"></lightning-icon>
+                                        <p class="auto-applied-text">{autoAppliedTooltip}</p>
+                                        <lightning-helptext content={labels.LargeTextInfoTooltip} icon-name="utility:info" class="auto-applied-helptext"></lightning-helptext>
                                     </div>
                                 </template>
                                 <template lwc:if={showSemanticGroupHint}>
-                                    <div class="semantic-group-hint">{semanticGroupHintText}</div>
+                                    <p class="semantic-group-hint">{semanticGroupHintText}</p>
                                 </template>
                                 <lightning-combobox
                                     variant="label-hidden"

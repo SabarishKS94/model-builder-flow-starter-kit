@@ -64,6 +64,7 @@ export const SemanticAutoBadge = 'Auto';
 export const SemanticGroupHeader = 'Semantic (2 max)';
 export const SemanticLockedHint = 'Limit reached. Remove one to enable.';
 export const AutoAppliedTooltip = 'Auto-applied because this field contains very long text. Click to change.';
+export const LargeTextInfoTooltip = 'Semantic Clustering uses an embedding model that captures meaning across long passages. Text Clustering relies on word-overlap, so it breaks down on long-form fields where the same idea is phrased many different ways.';
 export const ReplaceWithLabel = 'Replace With';
 export const GroupByLabel = 'Group By';
 export const NumberOfBucketsLabel = 'Number of Buckets';
