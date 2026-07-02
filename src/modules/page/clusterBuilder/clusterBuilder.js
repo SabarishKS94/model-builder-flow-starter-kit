@@ -286,6 +286,12 @@ export default class ClusterBuilder extends LightningElement {
             if (isSelected) rowClass += ' var-row_selected';
             if (isExpanded) rowClass += ' var-row_expanded';
             if (isPickerActive) rowClass += ' var-row_picker-active';
+            let openIconName = 'utility:forward';
+            let openAltText = 'Open settings';
+            if (this.variantMode === 'c') {
+                openIconName = isExpanded ? 'utility:chevrondown' : 'utility:chevronright';
+                openAltText = isExpanded ? 'Collapse settings' : 'Expand settings';
+            }
             return {
                 ...v,
                 isSelected,
@@ -297,7 +303,8 @@ export default class ClusterBuilder extends LightningElement {
                 rowClass,
                 showDelete: v.type !== 'date',
                 isExpanded,
-                openIconName: isExpanded ? 'utility:chevrondown' : 'utility:forward',
+                openIconName,
+                openAltText,
             };
         });
     }

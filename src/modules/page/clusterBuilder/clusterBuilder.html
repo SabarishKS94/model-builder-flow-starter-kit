@@ -479,7 +479,7 @@
                                             </template>
                                         </div>
                                         <div class="var-cell var-cell_settings">
-                                            <lightning-button-icon icon-name={v.openIconName} variant="border-filled" size="small" alternative-text="Open settings" data-id={v.id} onclick={handleRowSettingsClick} class="var-open-btn"></lightning-button-icon>
+                                            <lightning-button-icon icon-name={v.openIconName} variant="border-filled" size="small" alternative-text={v.openAltText} data-id={v.id} onclick={handleRowSettingsClick} class="var-open-btn"></lightning-button-icon>
                                         </div>
                                     </div>
                                     <template lwc:if={v.isExpanded}>
