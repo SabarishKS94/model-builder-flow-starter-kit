@@ -38,6 +38,7 @@ export const PrepareVariablesTitleRest = 'for clustering';
 export const ShowOnlySelected = 'Show only selected';
 export const VariableSearchPlaceholder = 'Search variables...';
 export const VariableColumn = 'Variable';
+export const TransformationColumn = 'Transformation';
 export const SettingsColumn = 'Settings';
 export const ReplaceMissingValues = 'Replace Missing Values';
 export const TextClustering = 'Text Clustering';

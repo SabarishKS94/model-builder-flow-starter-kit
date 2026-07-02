@@ -1,5 +1,12 @@
 <template>
     <div class="builder-shell">
+        <!-- Prototype variant switcher (demo only) -->
+        <div class="variant-switcher" role="group" aria-label="Prototype variant">
+            <span class="variant-switcher-label">Variant</span>
+            <button type="button" class={variantAChipClass} data-mode="a" onclick={handleVariantChange}>A · Chevron</button>
+            <button type="button" class={variantBChipClass} data-mode="b" onclick={handleVariantChange}>B · Docked panel</button>
+            <button type="button" class={variantCChipClass} data-mode="c" onclick={handleVariantChange}>C · Inline expand</button>
+        </div>
         <!-- Dark Header Bar -->
         <div class="builder-header-nav">
             <div class="nav-item nav-item_back">
@@ -447,9 +454,9 @@
                                         <lightning-icon icon-name="utility:check" size="xx-small" variant="bare" class="var-head-icon"></lightning-icon>
                                     </div>
                                     <div class="var-cell var-cell_variable">{labels.VariableColumn}</div>
+                                    <div class="var-cell var-cell_transformation">{labels.TransformationColumn}</div>
                                     <div class="var-cell var-cell_settings">
-                                        <lightning-icon icon-name="utility:settings" size="xx-small" variant="bare" class="var-head-icon"></lightning-icon>
-                                        <span>{labels.SettingsColumn}</span>
+                                        <span class="var-head-label">{labels.SettingsColumn}</span>
                                     </div>
                                 </div>
                                 <template for:each={filteredVariables} for:item="v">
@@ -459,9 +466,9 @@
                                         </div>
                                         <div class="var-cell var-cell_variable">
                                             <lightning-icon icon-name={v.iconName} size="xx-small" variant="bare" class="var-type-icon"></lightning-icon>
-                                            <a href="#" class="var-name" data-id={v.id} onclick={handleVariableNameClick}>{v.name}</a>
+                                            <span class="var-name">{v.name}</span>
                                         </div>
-                                        <div class="var-cell var-cell_settings">
+                                        <div class="var-cell var-cell_transformation">
                                             <template lwc:if={v.action}>
                                                 <lightning-button-group class="var-action-group">
                                                     <lightning-button label={v.actionLabel} variant={v.actionVariant} data-id={v.id} onclick={handleVariableNameClick}></lightning-button>
@@ -471,7 +478,59 @@
                                                 </lightning-button-group>
                                             </template>
                                         </div>
+                                        <div class="var-cell var-cell_settings">
+                                            <lightning-button-icon icon-name={v.openIconName} variant="border-filled" size="small" alternative-text="Open settings" data-id={v.id} onclick={handleRowSettingsClick} class="var-open-btn"></lightning-button-icon>
+                                        </div>
                                     </div>
+                                    <template lwc:if={v.isExpanded}>
+                                        <div class="var-inline-panel" key={v.id}>
+                                            <div class="var-inline-panel-tabs">
+                                                <div class="var-panel-tab">{labels.AlertsTab}</div>
+                                                <div class="var-panel-tab var-panel-tab_active">{labels.SettingsTab}</div>
+                                            </div>
+                                            <div class="var-inline-panel-body">
+                                                <div class="var-panel-field">
+                                                    <div class="var-panel-label-row">
+                                                        <span class="var-panel-label">{labels.TransformationLabel}</span>
+                                                        <span class="var-panel-info-badge">
+                                                            <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                                        </span>
+                                                    </div>
+                                                    <lightning-combobox
+                                                        variant="label-hidden"
+                                                        value={activeTransformation}
+                                                        options={transformationOptions}
+                                                        onchange={handleTransformationChange}
+                                                    ></lightning-combobox>
+                                                </div>
+                                                <template lwc:if={showNumberBuckets}>
+                                                    <div class="var-panel-field">
+                                                        <div class="var-panel-label-row">
+                                                            <span class="var-panel-label">{labels.NumberOfBucketsLabel}</span>
+                                                        </div>
+                                                        <div class="var-panel-bucket-range">{labels.BucketRangeLabel}</div>
+                                                        <div class="var-panel-slider-row">
+                                                            <input type="range" min="10" max="100" step="1" value={activeBucketCount} onchange={handleBucketChange} oninput={handleBucketChange} class="var-panel-slider" />
+                                                            <span class="var-panel-slider-value">{activeBucketCount}</span>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <template lwc:if={showDistribution}>
+                                                    <div class="var-panel-distribution">
+                                                        <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
+                                                        <p class="var-panel-distribution-row">
+                                                            <span class="var-panel-distribution-label">{labels.MinValueLabel}</span>
+                                                            <span class="var-panel-distribution-value">{distributionMin}</span>
+                                                        </p>
+                                                        <p class="var-panel-distribution-row">
+                                                            <span class="var-panel-distribution-label">{labels.MaxValueLabel}</span>
+                                                            <span class="var-panel-distribution-value">{distributionMax}</span>
+                                                        </p>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
                                 </template>
                             </div>
                         </template>
@@ -490,10 +549,37 @@
             <template lwc:if={showRightPanelContent}>
                 <template lwc:if={isVariablePanelOpen}>
                     <div class="builder-panel builder-panel_variable">
-                        <div class="var-panel-header">
-                            <h3 class="var-panel-title">{activeVariable.name}</h3>
-                            <lightning-button-icon icon-name="utility:close" variant="bare" size="small" alternative-text="Close panel" onclick={handleCloseVariablePanel}></lightning-button-icon>
-                        </div>
+                        <template lwc:if={isVariantB}>
+                            <div class="var-panel-header var-panel-header_picker">
+                                <span class="var-panel-header-label">Variable</span>
+                                <div class="variant-picker">
+                                    <button type="button" class="variant-picker-btn" onclick={handleToggleVariantPicker} aria-haspopup="listbox" aria-expanded={variantPickerOpen}>
+                                        <span class="variant-picker-btn-label">{variantPickerButtonLabel}</span>
+                                        <lightning-icon icon-name="utility:down" size="xx-small" variant="bare" class="variant-picker-btn-icon"></lightning-icon>
+                                    </button>
+                                    <template lwc:if={variantPickerOpen}>
+                                        <div class="variant-picker-dropdown">
+                                            <div class="variant-picker-search">
+                                                <lightning-input variant="label-hidden" type="search" placeholder="Search variables..." value={variantPickerSearch} onchange={handleVariantPickerSearch}></lightning-input>
+                                            </div>
+                                            <div class="variant-picker-list" role="listbox">
+                                                <template for:each={variantPickerOptions} for:item="opt">
+                                                    <button type="button" key={opt.id} class={opt.itemClass} data-id={opt.id} onclick={handleVariantPickerSelect} role="option">
+                                                        {opt.name}
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <div class="var-panel-header">
+                                <h3 class="var-panel-title">{activeVariable.name}</h3>
+                                <lightning-button-icon icon-name="utility:close" variant="bare" size="small" alternative-text="Close panel" onclick={handleCloseVariablePanel}></lightning-button-icon>
+                            </div>
+                        </template>
                         <div class="var-panel-tabs">
                             <div class="var-panel-tab">{labels.AlertsTab}</div>
                             <div class="var-panel-tab var-panel-tab_active">{labels.SettingsTab}</div>

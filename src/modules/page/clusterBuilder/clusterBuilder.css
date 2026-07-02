@@ -4,6 +4,60 @@
     height: 100vh;
     border-radius: 10px;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.12);
+    position: relative;
+}
+
+/* Prototype variant switcher (demo-only chip) */
+.variant-switcher {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+    background: #ffffff;
+    border: 1px solid var(--slds-g-color-border-2, #c9c9c9);
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-size: 12px;
+}
+
+.variant-switcher-label {
+    padding: 0 6px 0 4px;
+    font-weight: 700;
+    color: var(--slds-g-color-neutral-base-30, #444444);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 11px;
+}
+
+.variant-chip {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--slds-g-color-neutral-base-20, #2e2e2e);
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+}
+
+.variant-chip:hover {
+    background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+.variant-chip_active {
+    background: var(--slds-g-color-accent-2, #0250d9);
+    color: #ffffff;
+    border-color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.variant-chip_active:hover {
+    background: var(--slds-g-color-accent-2, #0250d9);
 }
 
 /* Dark Header Nav */
@@ -626,7 +680,7 @@
 
 .var-table-head {
     display: grid;
-    grid-template-columns: 48px 1fr 280px;
+    grid-template-columns: 48px 1fr 240px 48px;
     align-items: center;
     padding: 8px 16px;
     background: var(--slds-g-color-surface-2, #f3f3f3);
@@ -643,9 +697,13 @@
     gap: 6px;
 }
 
+.var-head-label {
+    font-weight: 700;
+}
+
 .var-row {
     display: grid;
-    grid-template-columns: 48px 1fr 280px;
+    grid-template-columns: 48px 1fr 240px 48px;
     align-items: center;
     padding: 6px 16px;
     border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
@@ -683,9 +741,14 @@
     min-width: 0;
 }
 
-.var-cell_settings {
+.var-cell_transformation {
     gap: 8px;
     justify-content: flex-start;
+}
+
+.var-cell_settings {
+    gap: 8px;
+    justify-content: center;
 }
 
 .var-checkbox {
@@ -709,15 +772,20 @@
 
 .var-name {
     font-size: 14px;
-    color: var(--slds-g-color-accent-3, #0b5cab);
-    text-decoration: none;
+    color: var(--slds-g-color-neutral-base-10, #181818);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.var-name:hover {
-    text-decoration: underline;
+.var-open-btn {
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-50, #747474);
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-50, #747474);
+}
+
+.var-row:hover .var-open-btn {
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-accent-2, #0250d9);
+    --slds-c-icon-color-foreground: var(--slds-g-color-accent-2, #0250d9);
 }
 
 .var-action-group {
@@ -1415,4 +1483,136 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
+}
+
+/* Variant B — docked picker in the right panel */
+.var-panel-header_picker {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 16px 20px 12px;
+}
+
+.var-panel-header-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--slds-g-color-neutral-base-30, #444444);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.variant-picker {
+    position: relative;
+}
+
+.variant-picker-btn {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
+    background: #ffffff;
+    border: 1px solid var(--slds-g-color-border-2, #c9c9c9);
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--slds-g-color-on-surface-1, #181818);
+    cursor: pointer;
+    text-align: left;
+}
+
+.variant-picker-btn:hover {
+    border-color: var(--slds-g-color-border-3, #939393);
+}
+
+.variant-picker-btn-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.variant-picker-btn-icon {
+    --slds-c-icon-color-foreground-default: var(--slds-g-color-neutral-base-30, #444444);
+    --slds-c-icon-color-foreground: var(--slds-g-color-neutral-base-30, #444444);
+    margin-left: 8px;
+}
+
+.variant-picker-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 320px;
+    background: #ffffff;
+    border: 1px solid var(--slds-g-color-border-2, #c9c9c9);
+    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+}
+
+.variant-picker-search {
+    padding: 8px;
+    border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+}
+
+.variant-picker-list {
+    overflow-y: auto;
+    padding: 4px 0;
+}
+
+.variant-picker-item {
+    appearance: none;
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-size: 14px;
+    color: var(--slds-g-color-on-surface-1, #181818);
+    cursor: pointer;
+}
+
+.variant-picker-item:hover {
+    background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+.variant-picker-item_active {
+    background: var(--slds-g-color-surface-3, #ebebeb);
+    font-weight: 700;
+}
+
+.var-row_picker-active {
+    background: var(--slds-g-color-surface-3, #ebebeb);
+}
+
+/* Variant C — inline expanded row */
+.var-row_expanded {
+    background: var(--slds-g-color-surface-2, #f3f3f3);
+}
+
+.var-inline-panel {
+    background: var(--slds-g-color-surface-1, #ffffff);
+    border-top: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+    border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+    padding: 8px 16px 16px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.var-inline-panel-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+}
+
+.var-inline-panel-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 520px;
 }

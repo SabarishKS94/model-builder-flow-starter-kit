@@ -110,6 +110,9 @@ export default class ClusterBuilder extends LightningElement {
         v25: 'Group by Month',
     };
     @track activeVariableId = null;
+    @track variantMode = 'a';
+    @track variantPickerOpen = false;
+    @track variantPickerSearch = '';
     @track variableTransformations = {
         v20: 'group-by-day',
         v21: 'group-by-month',
@@ -128,6 +131,25 @@ export default class ClusterBuilder extends LightningElement {
     @track activeArticleId = null;
     @track isTraining = false;
     @track isAgentforceOpen = false;
+
+    connectedCallback() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const stepParam = parseInt(params.get('step'), 10);
+            if (!isNaN(stepParam) && stepParam >= 1 && stepParam <= 5) {
+                this.currentStep = stepParam;
+            }
+            const variantParam = (params.get('variant') || '').toLowerCase();
+            if (variantParam === 'a' || variantParam === 'b' || variantParam === 'c') {
+                this.variantMode = variantParam;
+                if (variantParam === 'b' && !this.activeVariableId) {
+                    this.activeVariableId = ACCOUNT_VARIABLES[0].id;
+                }
+            }
+        } catch (e) {
+            // ignore
+        }
+    }
 
     get steps() {
         return STEPS.map((step) => {
@@ -250,6 +272,12 @@ export default class ClusterBuilder extends LightningElement {
             else if (v.type === 'date') iconName = 'utility:event';
             if (v.isLargeText) iconName = 'utility:richtextindent';
             const action = this.variableActions[v.id] || null;
+            const isExpanded = this.variantMode === 'c' && this.activeVariableId === v.id;
+            const isPickerActive = this.variantMode === 'b' && this.effectiveActiveVariableId === v.id;
+            let rowClass = 'var-row';
+            if (isSelected) rowClass += ' var-row_selected';
+            if (isExpanded) rowClass += ' var-row_expanded';
+            if (isPickerActive) rowClass += ' var-row_picker-active';
             return {
                 ...v,
                 isSelected,
@@ -258,8 +286,10 @@ export default class ClusterBuilder extends LightningElement {
                 actionVariant: 'neutral',
                 iconName,
                 showLargeTextInfo: !!v.isLargeText,
-                rowClass: isSelected ? 'var-row var-row_selected' : 'var-row',
+                rowClass,
                 showDelete: v.type !== 'date',
+                isExpanded,
+                openIconName: isExpanded ? 'utility:chevrondown' : 'utility:forward',
             };
         });
     }
@@ -285,18 +315,52 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     get activeVariable() {
-        if (!this.activeVariableId) return null;
-        return ACCOUNT_VARIABLES.find((v) => v.id === this.activeVariableId) || null;
+        const id = this.effectiveActiveVariableId;
+        if (!id) return null;
+        return ACCOUNT_VARIABLES.find((v) => v.id === id) || null;
     }
 
     get isVariablePanelOpen() {
+        if (this.currentStep === 3 && this.variantMode === 'b') return true;
+        if (this.currentStep === 3 && this.variantMode === 'c') return false;
         return !!this.activeVariable;
     }
 
+    get effectiveActiveVariableId() {
+        if (this.currentStep === 3 && this.variantMode === 'b') {
+            return this.activeVariableId || ACCOUNT_VARIABLES[0].id;
+        }
+        return this.activeVariableId;
+    }
+
+    get isVariantA() { return this.variantMode === 'a'; }
+    get isVariantB() { return this.variantMode === 'b'; }
+    get isVariantC() { return this.variantMode === 'c'; }
+    get variantAChipClass() { return `variant-chip${this.isVariantA ? ' variant-chip_active' : ''}`; }
+    get variantBChipClass() { return `variant-chip${this.isVariantB ? ' variant-chip_active' : ''}`; }
+    get variantCChipClass() { return `variant-chip${this.isVariantC ? ' variant-chip_active' : ''}`; }
+
+    get variantPickerOptions() {
+        const term = (this.variantPickerSearch || '').toLowerCase();
+        return ACCOUNT_VARIABLES
+            .filter((v) => !term || v.name.toLowerCase().includes(term))
+            .map((v) => ({
+                id: v.id,
+                name: v.name,
+                itemClass: `variant-picker-item${v.id === this.effectiveActiveVariableId ? ' variant-picker-item_active' : ''}`,
+            }));
+    }
+
+    get variantPickerButtonLabel() {
+        const v = this.activeVariable;
+        return v ? v.name : 'Select a variable';
+    }
+
     get activeTransformation() {
-        if (!this.activeVariableId) return 'none';
-        if (this.variableTransformations[this.activeVariableId]) {
-            return this.variableTransformations[this.activeVariableId];
+        const id = this.effectiveActiveVariableId;
+        if (!id) return 'none';
+        if (this.variableTransformations[id]) {
+            return this.variableTransformations[id];
         }
         const v = this.activeVariable;
         if (v && v.type === 'date') return 'group-by-day';
@@ -344,8 +408,9 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     get activeBucketCount() {
-        if (!this.activeVariableId) return 10;
-        return this.variableBuckets[this.activeVariableId] || 10;
+        const id = this.effectiveActiveVariableId;
+        if (!id) return 10;
+        return this.variableBuckets[id] || 10;
     }
 
     get textFrequencies() {
@@ -392,13 +457,15 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     get activeReplaceWith() {
-        if (!this.activeVariableId) return 'average';
-        return this.variableReplaceWith[this.activeVariableId] || 'average';
+        const id = this.effectiveActiveVariableId;
+        if (!id) return 'average';
+        return this.variableReplaceWith[id] || 'average';
     }
 
     get activeGroupBy() {
-        if (!this.activeVariableId) return 'account-name';
-        return this.variableGroupBy[this.activeVariableId] || 'account-name';
+        const id = this.effectiveActiveVariableId;
+        if (!id) return 'account-name';
+        return this.variableGroupBy[id] || 'account-name';
     }
 
     get showReplaceMissingOptions() {
@@ -614,11 +681,62 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     handleCloseVariablePanel() {
+        if (this.variantMode === 'b' && this.currentStep === 3) return;
         this.activeVariableId = null;
     }
 
+    handleVariantChange(event) {
+        const mode = event.currentTarget.dataset.mode;
+        if (!mode || mode === this.variantMode) return;
+        this.variantMode = mode;
+        this.variantPickerOpen = false;
+        if (mode === 'b') {
+            if (!this.activeVariableId) {
+                this.activeVariableId = ACCOUNT_VARIABLES[0].id;
+            }
+            this.showRightPanel = true;
+        } else if (mode === 'c') {
+            this.activeVariableId = null;
+        }
+    }
+
+    handleToggleVariantPicker() {
+        this.variantPickerOpen = !this.variantPickerOpen;
+    }
+
+    handleVariantPickerSearch(event) {
+        this.variantPickerSearch = event.target.value;
+    }
+
+    handleVariantPickerSelect(event) {
+        const id = event.currentTarget.dataset.id;
+        if (!id) return;
+        this.activeVariableId = id;
+        this.variantPickerOpen = false;
+        this.variantPickerSearch = '';
+    }
+
+    handleVariantRowExpand(event) {
+        event.preventDefault();
+        const id = event.currentTarget.dataset.id;
+        if (!id) return;
+        this.activeVariableId = this.activeVariableId === id ? null : id;
+    }
+
+    handleRowSettingsClick(event) {
+        event.preventDefault();
+        const id = event.currentTarget.dataset.id;
+        if (!id) return;
+        if (this.variantMode === 'c') {
+            this.activeVariableId = this.activeVariableId === id ? null : id;
+        } else {
+            this.activeVariableId = id;
+            this.showRightPanel = true;
+        }
+    }
+
     handleTransformationChange(event) {
-        const id = this.activeVariableId;
+        const id = this.effectiveActiveVariableId;
         if (!id) return;
         const value = event.detail.value;
         const trans = { ...this.variableTransformations };
@@ -644,19 +762,19 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     handleReplaceWithChange(event) {
-        const id = this.activeVariableId;
+        const id = this.effectiveActiveVariableId;
         if (!id) return;
         this.variableReplaceWith = { ...this.variableReplaceWith, [id]: event.detail.value };
     }
 
     handleGroupByChange(event) {
-        const id = this.activeVariableId;
+        const id = this.effectiveActiveVariableId;
         if (!id) return;
         this.variableGroupBy = { ...this.variableGroupBy, [id]: event.detail.value };
     }
 
     handleBucketChange(event) {
-        const id = this.activeVariableId;
+        const id = this.effectiveActiveVariableId;
         if (!id) return;
         this.variableBuckets = { ...this.variableBuckets, [id]: parseInt(event.target.value, 10) };
     }
