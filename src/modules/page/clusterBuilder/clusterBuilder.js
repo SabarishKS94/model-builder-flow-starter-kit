@@ -1,6 +1,7 @@
 import { LightningElement, track } from 'lwc';
 import * as Labels from 'data/labels/ClusterBuilder';
 import DataViewerModal from 'ui/dataViewerModal';
+import { navigate } from '../../../router';
 
 const STEPS = [
     { id: 1, label: Labels.Step1 },
@@ -934,7 +935,7 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     handleBack() {
-        window.location.href = '/app/aim-cluster';
+        navigate('/app/aim-cluster');
     }
 
     handleToggleAgentforce() {
