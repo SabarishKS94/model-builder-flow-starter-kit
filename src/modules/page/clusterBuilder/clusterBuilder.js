@@ -283,6 +283,7 @@ export default class ClusterBuilder extends LightningElement {
             const isExpanded = this.variantMode === 'c' && this.activeVariableId === v.id;
             const isPickerActive = this.variantMode === 'b' && this.effectiveActiveVariableId === v.id;
             let rowClass = 'var-row';
+            if (this.variantMode === 'b') rowClass += ' var-row_no-settings';
             if (isSelected) rowClass += ' var-row_selected';
             if (isExpanded) rowClass += ' var-row_expanded';
             if (isPickerActive) rowClass += ' var-row_picker-active';
@@ -351,6 +352,10 @@ export default class ClusterBuilder extends LightningElement {
     get isVariantA() { return this.variantMode === 'a'; }
     get isVariantB() { return this.variantMode === 'b'; }
     get isVariantC() { return this.variantMode === 'c'; }
+    get hideSettingsColumn() { return this.variantMode === 'b'; }
+    get showSettingsColumn() { return this.variantMode !== 'b'; }
+    get variableNameAsLink() { return this.variantMode === 'b'; }
+    get varTableHeadClass() { return this.hideSettingsColumn ? 'var-table-head var-table-head_no-settings' : 'var-table-head'; }
     get variantAChipClass() { return `variant-chip${this.isVariantA ? ' variant-chip_active' : ''}`; }
     get variantBChipClass() { return `variant-chip${this.isVariantB ? ' variant-chip_active' : ''}`; }
     get variantCChipClass() { return `variant-chip${this.isVariantC ? ' variant-chip_active' : ''}`; }

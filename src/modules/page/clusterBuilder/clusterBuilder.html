@@ -449,15 +449,17 @@
                     <div class="prepare-card">
                         <template lwc:if={accountSectionOpen}>
                             <div class="var-table">
-                                <div class="var-table-head">
+                                <div class={varTableHeadClass}>
                                     <div class="var-cell var-cell_check">
                                         <lightning-icon icon-name="utility:check" size="xx-small" variant="bare" class="var-head-icon"></lightning-icon>
                                     </div>
                                     <div class="var-cell var-cell_variable">{labels.VariableColumn}</div>
                                     <div class="var-cell var-cell_transformation">{labels.TransformationColumn}</div>
-                                    <div class="var-cell var-cell_settings">
-                                        <span class="var-head-label">{labels.SettingsColumn}</span>
-                                    </div>
+                                    <template lwc:if={showSettingsColumn}>
+                                        <div class="var-cell var-cell_settings">
+                                            <span class="var-head-label">{labels.SettingsColumn}</span>
+                                        </div>
+                                    </template>
                                 </div>
                                 <template for:each={filteredVariables} for:item="v">
                                     <div key={v.id} class={v.rowClass}>
@@ -466,7 +468,12 @@
                                         </div>
                                         <div class="var-cell var-cell_variable">
                                             <lightning-icon icon-name={v.iconName} size="xx-small" variant="bare" class="var-type-icon"></lightning-icon>
-                                            <span class="var-name">{v.name}</span>
+                                            <template lwc:if={variableNameAsLink}>
+                                                <a href="#" class="var-name var-name_link" data-id={v.id} onclick={handleRowSettingsClick}>{v.name}</a>
+                                            </template>
+                                            <template lwc:else>
+                                                <span class="var-name">{v.name}</span>
+                                            </template>
                                         </div>
                                         <div class="var-cell var-cell_transformation">
                                             <template lwc:if={v.action}>
@@ -478,9 +485,11 @@
                                                 </lightning-button-group>
                                             </template>
                                         </div>
-                                        <div class="var-cell var-cell_settings">
-                                            <lightning-button-icon icon-name={v.openIconName} variant="border-filled" size="small" alternative-text={v.openAltText} data-id={v.id} onclick={handleRowSettingsClick} class="var-open-btn"></lightning-button-icon>
-                                        </div>
+                                        <template lwc:if={showSettingsColumn}>
+                                            <div class="var-cell var-cell_settings">
+                                                <lightning-button-icon icon-name={v.openIconName} variant="border-filled" size="small" alternative-text={v.openAltText} data-id={v.id} onclick={handleRowSettingsClick} class="var-open-btn"></lightning-button-icon>
+                                            </div>
+                                        </template>
                                     </div>
                                     <template lwc:if={v.isExpanded}>
                                         <div class="var-inline-panel" key={v.id}>
