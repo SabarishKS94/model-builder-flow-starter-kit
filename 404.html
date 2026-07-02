@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting…</title>
+    <script>
+        (function () {
+            // Preserve the intended deep path/query/hash across the GH Pages redirect.
+            var pathSegments = location.pathname.split('/');
+            // For project pages (username.github.io/repo/...), keep the repo segment as the base.
+            var basePath = '/';
+            if (location.hostname.endsWith('.github.io') && pathSegments.length > 1) {
+                basePath = '/' + pathSegments[1] + '/';
+            }
+            var intended = location.pathname.substring(basePath.length - 1) + location.search + location.hash;
+            try { sessionStorage.spaRedirect = intended; } catch (e) { /* ignore */ }
+            location.replace(basePath);
+        })();
+    </script>
+</head>
+<body></body>
+</html>
