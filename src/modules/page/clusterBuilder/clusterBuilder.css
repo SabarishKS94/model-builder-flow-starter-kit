@@ -1888,3 +1888,198 @@
     font-weight: 700;
     color: var(--slds-g-color-on-surface-1, #181818);
 }
+
+/* ---------------------------------------- */
+/* Variant D — Numbered guided panel */
+/* ---------------------------------------- */
+
+.var-panel-body_d {
+    padding: 0;
+    gap: 0;
+    background: var(--slds-g-color-surface-2, #f7f7f9);
+}
+
+.d-intro-card {
+    padding: 16px 20px 14px;
+    background: linear-gradient(180deg, #eaf2ff 0%, #f7f7f9 100%);
+    border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.d-intro-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.d-intro-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--slds-g-color-on-surface-1, #181818);
+    margin: 0;
+    line-height: 22px;
+}
+
+.d-intro-body {
+    font-size: 13px;
+    color: var(--slds-g-color-on-surface-1, #181818);
+    line-height: 18px;
+    margin: 2px 0 0 0;
+}
+
+.d-step {
+    padding: 16px 20px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-bottom: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+    background: var(--slds-g-color-surface-1, #ffffff);
+}
+
+.d-step_preview {
+    background: var(--slds-g-color-surface-2, #f7f7f9);
+}
+
+.d-step-head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.d-step-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--slds-g-color-on-surface-1, #181818);
+    margin: 0;
+}
+
+.d-step-sub {
+    font-size: 12px;
+    color: var(--slds-g-color-on-surface-2, #5c5c5c);
+    line-height: 16px;
+    margin: 0;
+}
+
+.d-step-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 12px;
+}
+
+.d-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.d-field-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--slds-g-color-on-surface-1, #181818);
+}
+
+.d-callout {
+    background: var(--slds-g-color-surface-2, #f7f7f9);
+    border-left: 3px solid var(--slds-g-color-accent-2, #0250d9);
+    border-radius: 0 4px 4px 0;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.d-callout-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.d-callout-row_risk {
+    border-top: 1px dashed var(--slds-g-color-border-1, #e5e5e5);
+    padding-top: 8px;
+}
+
+.d-callout-key {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--slds-g-color-accent-2, #0250d9);
+}
+
+.d-callout-key_risk {
+    color: #ba0517;
+}
+
+.d-callout-body {
+    font-size: 13px;
+    color: var(--slds-g-color-on-surface-1, #181818);
+    line-height: 18px;
+    margin: 0;
+}
+
+.d-preview-card {
+    background: var(--slds-g-color-surface-1, #ffffff);
+    border: 1px solid var(--slds-g-color-border-1, #e5e5e5);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.d-preview-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--slds-g-color-on-surface-1, #181818);
+    margin: 0;
+}
+
+.d-preview-summary {
+    font-size: 13px;
+    color: var(--slds-g-color-on-surface-1, #181818);
+    line-height: 18px;
+    margin: 0 0 6px 0;
+}
+
+.d-risk-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 20px;
+    background: #fff5d6;
+    border-top: 1px solid #f2c94c;
+    border-bottom: 1px solid #f2c94c;
+}
+
+.d-risk-banner-icon {
+    --slds-c-icon-color-foreground-default: #8a5a00;
+    --slds-c-icon-color-foreground: #8a5a00;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.d-risk-banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.d-risk-banner-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6b4400;
+}
+
+.d-risk-banner-body {
+    font-size: 13px;
+    color: #4a3400;
+    line-height: 18px;
+    margin: 0;
+}

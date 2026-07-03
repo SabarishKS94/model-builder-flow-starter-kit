@@ -148,9 +148,9 @@ export default class ClusterBuilder extends LightningElement {
                 this.currentStep = stepParam;
             }
             const variantParam = (params.get('variant') || '').toLowerCase();
-            if (variantParam === 'a' || variantParam === 'b' || variantParam === 'b2' || variantParam === 'c') {
+            if (variantParam === 'a' || variantParam === 'b' || variantParam === 'b2' || variantParam === 'c' || variantParam === 'd') {
                 this.variantMode = variantParam;
-                if ((variantParam === 'b' || variantParam === 'b2') && !this.activeVariableId) {
+                if ((variantParam === 'b' || variantParam === 'b2' || variantParam === 'd') && !this.activeVariableId) {
                     this.activeVariableId = ACCOUNT_VARIABLES[0].id;
                 }
             }
@@ -281,9 +281,9 @@ export default class ClusterBuilder extends LightningElement {
             if (v.isLargeText) iconName = 'utility:richtextindent';
             const action = this.variableActions[v.id] || null;
             const isExpanded = this.variantMode === 'c' && this.activeVariableId === v.id;
-            const isPickerActive = (this.variantMode === 'b' || this.variantMode === 'b2') && this.effectiveActiveVariableId === v.id;
+            const isPickerActive = (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd') && this.effectiveActiveVariableId === v.id;
             let rowClass = 'var-row';
-            if (this.variantMode === 'b' || this.variantMode === 'b2') rowClass += ' var-row_no-settings';
+            if (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd') rowClass += ' var-row_no-settings';
             if (isSelected) rowClass += ' var-row_selected';
             if (isExpanded) rowClass += ' var-row_expanded';
             if (isPickerActive) rowClass += ' var-row_picker-active';
@@ -337,13 +337,13 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     get isVariablePanelOpen() {
-        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2')) return true;
+        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd')) return true;
         if (this.currentStep === 3 && this.variantMode === 'c') return false;
         return !!this.activeVariable;
     }
 
     get effectiveActiveVariableId() {
-        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2')) {
+        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd')) {
             return this.activeVariableId || ACCOUNT_VARIABLES[0].id;
         }
         return this.activeVariableId;
@@ -353,7 +353,8 @@ export default class ClusterBuilder extends LightningElement {
     get isVariantB() { return this.variantMode === 'b'; }
     get isVariantB2() { return this.variantMode === 'b2'; }
     get isVariantC() { return this.variantMode === 'c'; }
-    get isVariantBLike() { return this.variantMode === 'b' || this.variantMode === 'b2'; }
+    get isVariantD() { return this.variantMode === 'd'; }
+    get isVariantBLike() { return this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd'; }
     get hideSettingsColumn() { return this.isVariantBLike; }
     get showSettingsColumn() { return !this.isVariantBLike; }
     get variableNameAsLink() { return this.isVariantBLike; }
@@ -362,6 +363,7 @@ export default class ClusterBuilder extends LightningElement {
     get variantBChipClass() { return `variant-chip${this.isVariantB ? ' variant-chip_active' : ''}`; }
     get variantB2ChipClass() { return `variant-chip${this.isVariantB2 ? ' variant-chip_active' : ''}`; }
     get variantCChipClass() { return `variant-chip${this.isVariantC ? ' variant-chip_active' : ''}`; }
+    get variantDChipClass() { return `variant-chip${this.isVariantD ? ' variant-chip_active' : ''}`; }
 
     get variantPickerOptions() {
         const term = (this.variantPickerSearch || '').toLowerCase();
@@ -478,6 +480,26 @@ export default class ClusterBuilder extends LightningElement {
 
     get showB2AnySample() {
         return this.showB2ReplaceSample || this.showB2DaySample || this.showB2MonthSample || this.showB2TextSample;
+    }
+
+    get showDReplaceSample() { return this.isVariantD && this.activeTransformation === 'replace-missing'; }
+    get showDDaySample() { return this.isVariantD && this.activeTransformation === 'group-by-day'; }
+    get showDMonthSample() { return this.isVariantD && this.activeTransformation === 'group-by-month'; }
+    get showDTextSample() { return this.isVariantD && this.activeTransformation === 'text-clustering'; }
+    get showDAnySample() { return this.showDReplaceSample || this.showDDaySample || this.showDMonthSample || this.showDTextSample; }
+    get dSampleTitle() {
+        if (this.showDReplaceSample) return 'Missing values will be filled per group';
+        if (this.showDDaySample) return 'Dates will be grouped by day';
+        if (this.showDMonthSample) return 'Dates will be grouped by month';
+        if (this.showDTextSample) return 'Free text will collapse into categories';
+        return '';
+    }
+    get dSampleSummary() {
+        if (this.showDReplaceSample) return 'Rows with a missing value will use the group average — 18% of your rows.';
+        if (this.showDDaySample) return '4,400+ dates → ~2,900 day buckets. Fine-grained but sparse.';
+        if (this.showDMonthSample) return '4,400+ dates → 148 month buckets. Denser groups, easier to cluster.';
+        if (this.showDTextSample) return 'Free text → 5 categories representing 100% of your rows.';
+        return '';
     }
 
     get b2ReplaceBeforeBars() {
@@ -785,7 +807,7 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     handleCloseVariablePanel() {
-        if ((this.variantMode === 'b' || this.variantMode === 'b2') && this.currentStep === 3) return;
+        if ((this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd') && this.currentStep === 3) return;
         this.activeVariableId = null;
     }
 
@@ -794,7 +816,7 @@ export default class ClusterBuilder extends LightningElement {
         if (!mode || mode === this.variantMode) return;
         this.variantMode = mode;
         this.variantPickerOpen = false;
-        if (mode === 'b' || mode === 'b2') {
+        if (mode === 'b' || mode === 'b2' || mode === 'd') {
             if (!this.activeVariableId) {
                 this.activeVariableId = ACCOUNT_VARIABLES[0].id;
             }

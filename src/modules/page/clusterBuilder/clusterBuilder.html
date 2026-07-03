@@ -7,6 +7,7 @@
             <button type="button" class={variantBChipClass} data-mode="b" onclick={handleVariantChange}>B · Docked panel</button>
             <button type="button" class={variantB2ChipClass} data-mode="b2" onclick={handleVariantChange}>B2 · Guided panel</button>
             <button type="button" class={variantCChipClass} data-mode="c" onclick={handleVariantChange}>C · Inline expand</button>
+            <button type="button" class={variantDChipClass} data-mode="d" onclick={handleVariantChange}>D · Numbered guide</button>
         </div>
         <!-- Dark Header Bar -->
         <div class="builder-header-nav">
@@ -609,6 +610,31 @@
                                 </div>
                             </div>
                         </template>
+                        <template lwc:elseif={isVariantD}>
+                            <div class="var-panel-header var-panel-header_picker">
+                                <span class="var-panel-header-label">Variable</span>
+                                <div class="variant-picker">
+                                    <button type="button" class="variant-picker-btn" onclick={handleToggleVariantPicker} aria-haspopup="listbox" aria-expanded={variantPickerOpen}>
+                                        <span class="variant-picker-btn-label">{variantPickerButtonLabel}</span>
+                                        <lightning-icon icon-name="utility:down" size="xx-small" variant="bare" class="variant-picker-btn-icon"></lightning-icon>
+                                    </button>
+                                    <template lwc:if={variantPickerOpen}>
+                                        <div class="variant-picker-dropdown">
+                                            <div class="variant-picker-search">
+                                                <lightning-input variant="label-hidden" type="search" placeholder="Search variables..." value={variantPickerSearch} onchange={handleVariantPickerSearch}></lightning-input>
+                                            </div>
+                                            <div class="variant-picker-list" role="listbox">
+                                                <template for:each={variantPickerOptions} for:item="opt">
+                                                    <button type="button" key={opt.id} class={opt.itemClass} data-id={opt.id} onclick={handleVariantPickerSelect} role="option">
+                                                        {opt.name}
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
                         <template lwc:else>
                             <div class="var-panel-header">
                                 <h3 class="var-panel-title">{activeVariable.name}</h3>
@@ -818,6 +844,192 @@
                                             </p>
                                         </div>
                                     </template>
+                                </div>
+                            </div>
+                        </template>
+                        <template lwc:elseif={isVariantD}>
+                            <!-- D: Numbered guided steps -->
+                            <div class="var-panel-tabs">
+                                <div class="var-panel-tab var-panel-tab_active">{labels.SettingsTab}</div>
+                                <div class="var-panel-tab">{labels.AlertsTab}</div>
+                            </div>
+                            <div class="var-panel-body var-panel-body_d">
+                                <!-- Intro card -->
+                                <div class="d-intro-card">
+                                    <span class="d-intro-eyebrow">{labels.DPanelIntroEyebrow}</span>
+                                    <h4 class="d-intro-title">{labels.DPanelIntroTitle}</h4>
+                                    <p class="d-intro-body">{labels.DPanelIntroBody}</p>
+                                </div>
+
+                                <!-- Step 1 -->
+                                <section class="d-step">
+                                    <div class="d-step-head">
+                                        <h5 class="d-step-title">{labels.DStep1Title}</h5>
+                                        <p class="d-step-sub">{labels.DStep1Sub}</p>
+                                    </div>
+                                    <div class="d-step-body">
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeTransformation}
+                                            options={transformationOptions}
+                                            onchange={handleTransformationChange}
+                                        ></lightning-combobox>
+                                        <div class="d-callout">
+                                            <div class="d-callout-row">
+                                                <span class="d-callout-key">Why this matters</span>
+                                                <p class="d-callout-body">{labels.DStep1What}</p>
+                                            </div>
+                                            <div class="d-callout-row d-callout-row_risk">
+                                                <span class="d-callout-key d-callout-key_risk">Risk if skipped</span>
+                                                <p class="d-callout-body">{labels.DStep1Risk}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Step 2 -->
+                                <section class="d-step">
+                                    <div class="d-step-head">
+                                        <h5 class="d-step-title">{labels.DStep2Title}</h5>
+                                        <p class="d-step-sub">{labels.DStep2Sub}</p>
+                                    </div>
+                                    <div class="d-step-body">
+                                        <template lwc:if={showReplaceMissingOptions}>
+                                            <div class="d-field">
+                                                <label class="d-field-label">{labels.DReplaceWithLabelD}</label>
+                                                <lightning-combobox
+                                                    variant="label-hidden"
+                                                    value={activeReplaceWith}
+                                                    options={replaceWithOptions}
+                                                    onchange={handleReplaceWithChange}
+                                                ></lightning-combobox>
+                                                <div class="d-callout">
+                                                    <div class="d-callout-row">
+                                                        <span class="d-callout-key">Why this matters</span>
+                                                        <p class="d-callout-body">{labels.DReplaceWithWhat}</p>
+                                                    </div>
+                                                    <div class="d-callout-row d-callout-row_risk">
+                                                        <span class="d-callout-key d-callout-key_risk">Risk if skipped</span>
+                                                        <p class="d-callout-body">{labels.DReplaceWithRisk}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-field">
+                                                <label class="d-field-label">{labels.DGroupByLabelD}</label>
+                                                <lightning-combobox
+                                                    variant="label-hidden"
+                                                    value={activeGroupBy}
+                                                    options={groupByOptions}
+                                                    onchange={handleGroupByChange}
+                                                ></lightning-combobox>
+                                                <div class="d-callout">
+                                                    <div class="d-callout-row">
+                                                        <span class="d-callout-key">Why this matters</span>
+                                                        <p class="d-callout-body">{labels.DGroupByWhat}</p>
+                                                    </div>
+                                                    <div class="d-callout-row d-callout-row_risk">
+                                                        <span class="d-callout-key d-callout-key_risk">Risk if skipped</span>
+                                                        <p class="d-callout-body">{labels.DGroupByRisk}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <template lwc:if={showNumberBuckets}>
+                                            <div class="d-field">
+                                                <label class="d-field-label">{labels.DBucketsLabelD}</label>
+                                                <div class="var-panel-slider-row">
+                                                    <input type="range" min="10" max="100" step="1" value={activeBucketCount} onchange={handleBucketChange} oninput={handleBucketChange} class="var-panel-slider" />
+                                                    <span class="var-panel-slider-value">{activeBucketCount}</span>
+                                                </div>
+                                                <div class="d-callout">
+                                                    <div class="d-callout-row">
+                                                        <span class="d-callout-key">Why this matters</span>
+                                                        <p class="d-callout-body">{labels.DBucketsWhat}</p>
+                                                    </div>
+                                                    <div class="d-callout-row d-callout-row_risk">
+                                                        <span class="d-callout-key d-callout-key_risk">Risk if skipped</span>
+                                                        <p class="d-callout-body">{labels.DBucketsRisk}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </section>
+
+                                <!-- Step 3: sample outcome -->
+                                <template lwc:if={showDAnySample}>
+                                    <section class="d-step d-step_preview">
+                                        <div class="d-step-head">
+                                            <h5 class="d-step-title">{labels.DStep3Title}</h5>
+                                            <p class="d-step-sub">{labels.DStep3Sub}</p>
+                                        </div>
+                                        <div class="d-preview-card">
+                                            <h6 class="d-preview-title">{dSampleTitle}</h6>
+                                            <p class="d-preview-summary">{dSampleSummary}</p>
+
+                                            <template lwc:if={showDReplaceSample}>
+                                                <div class="b2-sample-pair">
+                                                    <div class="b2-sample-col">
+                                                        <span class="b2-sample-col-title">Before</span>
+                                                        <div class="b2-mini-chart">
+                                                            <template for:each={b2ReplaceBeforeBars} for:item="bar">
+                                                                <span key={bar.id} class={bar.barClass} style={bar.style}></span>
+                                                            </template>
+                                                        </div>
+                                                        <span class="b2-sample-col-caption">18% missing</span>
+                                                    </div>
+                                                    <div class="b2-sample-col">
+                                                        <span class="b2-sample-col-title">After</span>
+                                                        <div class="b2-mini-chart">
+                                                            <template for:each={b2ReplaceAfterBars} for:item="bar">
+                                                                <span key={bar.id} class={bar.barClass} style={bar.style}></span>
+                                                            </template>
+                                                        </div>
+                                                        <span class="b2-sample-col-caption">Filled with group average</span>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <template lwc:if={showDDaySample}>
+                                                <div class="b2-bucket-chart">
+                                                    <template for:each={b2DayBuckets} for:item="d">
+                                                        <div key={d.id} class="b2-bucket">
+                                                            <span class="b2-bucket-bar" style={d.style}></span>
+                                                            <span class="b2-bucket-label">{d.label}</span>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                            <template lwc:if={showDMonthSample}>
+                                                <div class="b2-bucket-chart">
+                                                    <template for:each={b2MonthBuckets} for:item="m">
+                                                        <div key={m.id} class="b2-bucket">
+                                                            <span class="b2-bucket-bar" style={m.style}></span>
+                                                            <span class="b2-bucket-label">{m.label}</span>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                            <template lwc:if={showDTextSample}>
+                                                <div class="b2-cat-list">
+                                                    <template for:each={b2TextCategories} for:item="cat">
+                                                        <div key={cat.id} class="b2-cat-row">
+                                                            <span class="b2-cat-pill">{cat.label}</span>
+                                                            <span class="b2-cat-count">{cat.count}</span>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </section>
+                                </template>
+
+                                <!-- Risk banner -->
+                                <div class="d-risk-banner">
+                                    <lightning-icon icon-name="utility:warning" size="small" class="d-risk-banner-icon"></lightning-icon>
+                                    <div class="d-risk-banner-text">
+                                        <span class="d-risk-banner-title">{labels.DRiskBannerTitle}</span>
+                                        <p class="d-risk-banner-body">{labels.DRiskBannerBody}</p>
+                                    </div>
                                 </div>
                             </div>
                         </template>

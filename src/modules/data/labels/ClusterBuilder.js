@@ -121,6 +121,38 @@ export const B2SampleMonthCaption = '4,400+ dates collapsed into 148 month bucke
 export const B2SampleTextLabel = 'Category clusters';
 export const B2SampleTextCaption = 'Free text collapsed into a small set of categories.';
 
+// Variant D — Guided (numbered steps + risk banner + sample outcome)
+// [draft — verify]
+export const DPanelIntroEyebrow = 'Preparing this variable';
+export const DPanelIntroTitle = "Turn this variable into something the model can read";
+export const DPanelIntroBody = 'Raw values like timestamps, free text, or fields with gaps are hard for a clustering model to compare. Two quick decisions below reshape this variable into a clean input.';
+
+export const DStep1Title = '1 · Pick a transformation';
+export const DStep1Sub = 'Chooses how this variable is reshaped before training.';
+export const DStep1What = 'Sets the recipe used to prepare this variable — filling gaps, grouping dates, or collapsing free text.';
+export const DStep1Risk = 'If you leave this as None, sparse or high-cardinality fields can dominate the model without adding meaning.';
+
+export const DStep2Title = '2 · Fine-tune the recipe';
+export const DStep2Sub = 'Only shows the extra choices your transformation needs.';
+
+export const DReplaceWithLabelD = 'Fill missing values with';
+export const DReplaceWithWhat = 'The value the model will use whenever this field is empty. Average is a safe default for most numeric fields.';
+export const DReplaceWithRisk = 'Empty rows get dropped from training if you skip this — your training set shrinks silently.';
+
+export const DGroupByLabelD = 'Compute the fill-in per category';
+export const DGroupByWhat = 'Use categories (like industry or region) so the fill-in reflects the group each row belongs to, not just a global average.';
+export const DGroupByRisk = 'A single global fill-in can wash out real differences between segments.';
+
+export const DBucketsLabelD = 'Split into buckets';
+export const DBucketsWhat = 'The number of equal-width bins the numeric range is split into. Around 10-20 works for most business metrics.';
+export const DBucketsRisk = 'Too few buckets flattens real patterns; too many creates near-empty groups that add noise.';
+
+export const DStep3Title = '3 · Preview the outcome';
+export const DStep3Sub = 'What the model will see for this variable after training.';
+
+export const DRiskBannerTitle = 'Skipping this?';
+export const DRiskBannerBody = 'Leaving this variable un-transformed is fine only when the raw values are already clean, dense, and low-cardinality. Otherwise, the model may ignore it or over-weight it.';
+
 // Step 4 - Define Settings
 export const DefineSettingsTitleBold = 'Select an Algorithm';
 export const DefineSettingsTitleRest = 'for Your Model';
