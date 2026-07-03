@@ -5,6 +5,7 @@
             <span class="variant-switcher-label">Variant</span>
             <button type="button" class={variantAChipClass} data-mode="a" onclick={handleVariantChange}>A · Chevron</button>
             <button type="button" class={variantBChipClass} data-mode="b" onclick={handleVariantChange}>B · Docked panel</button>
+            <button type="button" class={variantB2ChipClass} data-mode="b2" onclick={handleVariantChange}>B2 · Guided panel</button>
             <button type="button" class={variantCChipClass} data-mode="c" onclick={handleVariantChange}>C · Inline expand</button>
         </div>
         <!-- Dark Header Bar -->
@@ -583,113 +584,346 @@
                                 </div>
                             </div>
                         </template>
+                        <template lwc:elseif={isVariantB2}>
+                            <div class="var-panel-header var-panel-header_picker">
+                                <span class="var-panel-header-label">Variable</span>
+                                <div class="variant-picker">
+                                    <button type="button" class="variant-picker-btn" onclick={handleToggleVariantPicker} aria-haspopup="listbox" aria-expanded={variantPickerOpen}>
+                                        <span class="variant-picker-btn-label">{variantPickerButtonLabel}</span>
+                                        <lightning-icon icon-name="utility:down" size="xx-small" variant="bare" class="variant-picker-btn-icon"></lightning-icon>
+                                    </button>
+                                    <template lwc:if={variantPickerOpen}>
+                                        <div class="variant-picker-dropdown">
+                                            <div class="variant-picker-search">
+                                                <lightning-input variant="label-hidden" type="search" placeholder="Search variables..." value={variantPickerSearch} onchange={handleVariantPickerSearch}></lightning-input>
+                                            </div>
+                                            <div class="variant-picker-list" role="listbox">
+                                                <template for:each={variantPickerOptions} for:item="opt">
+                                                    <button type="button" key={opt.id} class={opt.itemClass} data-id={opt.id} onclick={handleVariantPickerSelect} role="option">
+                                                        {opt.name}
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
                         <template lwc:else>
                             <div class="var-panel-header">
                                 <h3 class="var-panel-title">{activeVariable.name}</h3>
                                 <lightning-button-icon icon-name="utility:close" variant="bare" size="small" alternative-text="Close panel" onclick={handleCloseVariablePanel}></lightning-button-icon>
                             </div>
                         </template>
-                        <div class="var-panel-tabs">
-                            <div class="var-panel-tab">{labels.AlertsTab}</div>
-                            <div class="var-panel-tab var-panel-tab_active">{labels.SettingsTab}</div>
-                        </div>
-                        <div class="var-panel-body">
-                            <div class="var-panel-field">
-                                <div class="var-panel-label-row">
-                                    <span class="var-panel-label">{labels.TransformationLabel}</span>
-                                    <span class="var-panel-info-badge">
-                                        <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
-                                    </span>
-                                </div>
-                                <lightning-combobox
-                                    variant="label-hidden"
-                                    value={activeTransformation}
-                                    options={transformationOptions}
-                                    onchange={handleTransformationChange}
-                                ></lightning-combobox>
+
+                        <template lwc:if={isVariantB2}>
+                            <!-- B2: Settings first, then Alerts -->
+                            <div class="var-panel-tabs">
+                                <div class="var-panel-tab var-panel-tab_active">{labels.SettingsTab}</div>
+                                <div class="var-panel-tab">{labels.AlertsTab}</div>
                             </div>
+                            <div class="var-panel-body var-panel-body_b2">
+                                <!-- Standard settings section -->
+                                <div class="b2-section">
+                                    <div class="b2-section-head">
+                                        <h4 class="b2-section-title">{labels.B2StandardSectionTitle}</h4>
+                                        <p class="b2-section-sub">{labels.B2StandardSectionSubtitle}</p>
+                                    </div>
 
-                            <template lwc:if={showReplaceMissingOptions}>
-                                <div class="var-panel-field">
-                                    <div class="var-panel-label-row">
-                                        <span class="var-panel-label var-panel-label_required">{labels.ReplaceWithLabel}</span>
-                                        <span class="var-panel-info-badge">
-                                            <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
-                                        </span>
+                                    <!-- Upfront explanation replaces the info icon -->
+                                    <div class="b2-intro">
+                                        <h5 class="b2-intro-title">{labels.B2TransformIntroTitle}</h5>
+                                        <p class="b2-intro-row"><span class="b2-intro-key">{labels.B2LabelWhatPrefix}</span> {labels.B2TransformIntroWhat}</p>
+                                        <p class="b2-intro-row"><span class="b2-intro-key">When:</span> {labels.B2TransformIntroWhen}</p>
+                                        <p class="b2-intro-row"><span class="b2-intro-key">{labels.B2LabelWhyPrefix}</span> {labels.B2TransformIntroWhy}</p>
+                                        <p class="b2-intro-row"><span class="b2-intro-key">Outcome:</span> {labels.B2TransformIntroOutcome}</p>
+                                        <p class="b2-intro-row b2-intro-row_risk"><span class="b2-intro-key b2-intro-key_risk">{labels.B2LabelRiskPrefix}</span> {labels.B2TransformIntroRisk}</p>
                                     </div>
-                                    <lightning-combobox
-                                        variant="label-hidden"
-                                        value={activeReplaceWith}
-                                        options={replaceWithOptions}
-                                        onchange={handleReplaceWithChange}
-                                    ></lightning-combobox>
-                                </div>
-                                <div class="var-panel-field">
-                                    <div class="var-panel-label-row">
-                                        <span class="var-panel-label var-panel-label_required">{labels.GroupByLabel}</span>
-                                        <span class="var-panel-info-badge">
-                                            <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
-                                        </span>
-                                    </div>
-                                    <lightning-combobox
-                                        variant="label-hidden"
-                                        value={activeGroupBy}
-                                        options={groupByOptions}
-                                        onchange={handleGroupByChange}
-                                    ></lightning-combobox>
-                                </div>
-                            </template>
 
-                            <template lwc:if={showNumberBuckets}>
-                                <div class="var-panel-field">
-                                    <div class="var-panel-label-row">
-                                        <span class="var-panel-label">{labels.NumberOfBucketsLabel}</span>
-                                        <span class="var-panel-info-badge">
-                                            <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
-                                        </span>
-                                    </div>
-                                    <div class="var-panel-bucket-range">{labels.BucketRangeLabel}</div>
-                                    <div class="var-panel-slider-row">
-                                        <input type="range" min="10" max="100" step="1" value={activeBucketCount} onchange={handleBucketChange} oninput={handleBucketChange} class="var-panel-slider" />
-                                        <span class="var-panel-slider-value">{activeBucketCount}</span>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <template lwc:if={showTextFrequencyChart}>
-                                <div class="var-panel-distribution">
-                                    <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
-                                    <div class="var-freq-chart">
-                                        <div class="var-freq-axis">
-                                            <span class="var-freq-axis-label">{labels.CountAxisLabel}</span>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label">{labels.TransformationLabel}</span>
                                         </div>
-                                        <template for:each={textFrequencies} for:item="row">
-                                            <div key={row.label} class="var-freq-row">
-                                                <span class="var-freq-label">{row.label}</span>
-                                                <div class="var-freq-bar-wrap">
-                                                    <div class="var-freq-bar" style={row.barStyle}></div>
-                                                    <span class="var-freq-count">{row.count}</span>
-                                                </div>
-                                            </div>
-                                        </template>
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeTransformation}
+                                            options={transformationOptions}
+                                            onchange={handleTransformationChange}
+                                        ></lightning-combobox>
+                                        <p class="b2-hint"><span class="b2-hint-key">{labels.B2LabelWhatPrefix}</span> {labels.B2TransformationWhat}</p>
+                                        <p class="b2-hint b2-hint_risk"><span class="b2-hint-key b2-hint-key_risk">{labels.B2LabelRiskPrefix}</span> {labels.B2TransformationRisk}</p>
                                     </div>
                                 </div>
-                            </template>
 
-                            <template lwc:if={showDistribution}>
-                                <div class="var-panel-distribution">
-                                    <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
-                                    <p class="var-panel-distribution-row">
-                                        <span class="var-panel-distribution-label">{labels.MinValueLabel}</span>
-                                        <span class="var-panel-distribution-value">{distributionMin}</span>
-                                    </p>
-                                    <p class="var-panel-distribution-row">
-                                        <span class="var-panel-distribution-label">{labels.MaxValueLabel}</span>
-                                        <span class="var-panel-distribution-value">{distributionMax}</span>
-                                    </p>
+                                <!-- Divider -->
+                                <div class="b2-divider" aria-hidden="true"></div>
+
+                                <!-- Transformation-specific section -->
+                                <div class="b2-section">
+                                    <div class="b2-section-head">
+                                        <h4 class="b2-section-title">{labels.B2TransformSectionTitle}</h4>
+                                        <p class="b2-section-sub">{labels.B2TransformSectionSubtitle}</p>
+                                    </div>
+
+                                    <template lwc:if={showReplaceMissingOptions}>
+                                        <div class="var-panel-field">
+                                            <div class="var-panel-label-row">
+                                                <span class="var-panel-label var-panel-label_required">{labels.ReplaceWithLabel}</span>
+                                            </div>
+                                            <lightning-combobox
+                                                variant="label-hidden"
+                                                value={activeReplaceWith}
+                                                options={replaceWithOptions}
+                                                onchange={handleReplaceWithChange}
+                                            ></lightning-combobox>
+                                            <p class="b2-hint"><span class="b2-hint-key">{labels.B2LabelWhatPrefix}</span> {labels.B2ReplaceWithWhat}</p>
+                                            <p class="b2-hint b2-hint_risk"><span class="b2-hint-key b2-hint-key_risk">{labels.B2LabelRiskPrefix}</span> {labels.B2ReplaceWithRisk}</p>
+                                        </div>
+                                        <div class="var-panel-field">
+                                            <div class="var-panel-label-row">
+                                                <span class="var-panel-label var-panel-label_required">{labels.B2GroupByLabel}</span>
+                                            </div>
+                                            <lightning-combobox
+                                                variant="label-hidden"
+                                                value={activeGroupBy}
+                                                options={groupByOptions}
+                                                onchange={handleGroupByChange}
+                                            ></lightning-combobox>
+                                            <p class="b2-hint"><span class="b2-hint-key">{labels.B2LabelWhatPrefix}</span> {labels.B2GroupByWhat}</p>
+                                            <p class="b2-hint b2-hint_risk"><span class="b2-hint-key b2-hint-key_risk">{labels.B2LabelRiskPrefix}</span> {labels.B2GroupByRisk}</p>
+                                        </div>
+                                    </template>
+
+                                    <template lwc:if={showNumberBuckets}>
+                                        <div class="var-panel-field">
+                                            <div class="var-panel-label-row">
+                                                <span class="var-panel-label">{labels.NumberOfBucketsLabel}</span>
+                                            </div>
+                                            <div class="var-panel-bucket-range">{labels.BucketRangeLabel}</div>
+                                            <div class="var-panel-slider-row">
+                                                <input type="range" min="10" max="100" step="1" value={activeBucketCount} onchange={handleBucketChange} oninput={handleBucketChange} class="var-panel-slider" />
+                                                <span class="var-panel-slider-value">{activeBucketCount}</span>
+                                            </div>
+                                            <p class="b2-hint"><span class="b2-hint-key">{labels.B2LabelWhatPrefix}</span> {labels.B2BucketsWhat}</p>
+                                            <p class="b2-hint b2-hint_risk"><span class="b2-hint-key b2-hint-key_risk">{labels.B2LabelRiskPrefix}</span> {labels.B2BucketsRisk}</p>
+                                        </div>
+                                    </template>
+
+                                    <!-- Sample outcome preview -->
+                                    <template lwc:if={showB2AnySample}>
+                                        <div class="b2-sample">
+                                            <h5 class="b2-sample-title">{labels.B2SamplePreviewTitle}</h5>
+                                            <p class="b2-sample-caption">{labels.B2SamplePreviewCaption}</p>
+
+                                            <template lwc:if={showB2ReplaceSample}>
+                                                <div class="b2-sample-pair">
+                                                    <div class="b2-sample-col">
+                                                        <span class="b2-sample-col-title">{labels.B2SampleReplaceBeforeLabel}</span>
+                                                        <div class="b2-mini-chart">
+                                                            <template for:each={b2ReplaceBeforeBars} for:item="bar">
+                                                                <span key={bar.id} class={bar.barClass} style={bar.style}></span>
+                                                            </template>
+                                                        </div>
+                                                        <span class="b2-sample-col-caption">{labels.B2SampleReplaceBeforeCaption}</span>
+                                                    </div>
+                                                    <div class="b2-sample-col">
+                                                        <span class="b2-sample-col-title">{labels.B2SampleReplaceAfterLabel}</span>
+                                                        <div class="b2-mini-chart">
+                                                            <template for:each={b2ReplaceAfterBars} for:item="bar">
+                                                                <span key={bar.id} class={bar.barClass} style={bar.style}></span>
+                                                            </template>
+                                                        </div>
+                                                        <span class="b2-sample-col-caption">{labels.B2SampleReplaceAfterCaption}</span>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <template lwc:if={showB2DaySample}>
+                                                <div class="b2-sample-single">
+                                                    <span class="b2-sample-col-title">{labels.B2SampleDayLabel}</span>
+                                                    <div class="b2-bucket-chart">
+                                                        <template for:each={b2DayBuckets} for:item="d">
+                                                            <div key={d.id} class="b2-bucket">
+                                                                <span class="b2-bucket-bar" style={d.style}></span>
+                                                                <span class="b2-bucket-label">{d.label}</span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                    <span class="b2-sample-col-caption">{labels.B2SampleDayCaption}</span>
+                                                </div>
+                                            </template>
+
+                                            <template lwc:if={showB2MonthSample}>
+                                                <div class="b2-sample-single">
+                                                    <span class="b2-sample-col-title">{labels.B2SampleMonthLabel}</span>
+                                                    <div class="b2-bucket-chart">
+                                                        <template for:each={b2MonthBuckets} for:item="m">
+                                                            <div key={m.id} class="b2-bucket">
+                                                                <span class="b2-bucket-bar" style={m.style}></span>
+                                                                <span class="b2-bucket-label">{m.label}</span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                    <span class="b2-sample-col-caption">{labels.B2SampleMonthCaption}</span>
+                                                </div>
+                                            </template>
+
+                                            <template lwc:if={showB2TextSample}>
+                                                <div class="b2-sample-single">
+                                                    <span class="b2-sample-col-title">{labels.B2SampleTextLabel}</span>
+                                                    <div class="b2-cat-list">
+                                                        <template for:each={b2TextCategories} for:item="cat">
+                                                            <div key={cat.id} class="b2-cat-row">
+                                                                <span class="b2-cat-pill">{cat.label}</span>
+                                                                <span class="b2-cat-count">{cat.count}</span>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                    <span class="b2-sample-col-caption">{labels.B2SampleTextCaption}</span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+
+                                    <template lwc:if={showTextFrequencyChart}>
+                                        <div class="var-panel-distribution">
+                                            <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
+                                            <div class="var-freq-chart">
+                                                <div class="var-freq-axis">
+                                                    <span class="var-freq-axis-label">{labels.CountAxisLabel}</span>
+                                                </div>
+                                                <template for:each={textFrequencies} for:item="row">
+                                                    <div key={row.label} class="var-freq-row">
+                                                        <span class="var-freq-label">{row.label}</span>
+                                                        <div class="var-freq-bar-wrap">
+                                                            <div class="var-freq-bar" style={row.barStyle}></div>
+                                                            <span class="var-freq-count">{row.count}</span>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <template lwc:if={showDistribution}>
+                                        <div class="var-panel-distribution">
+                                            <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
+                                            <p class="var-panel-distribution-row">
+                                                <span class="var-panel-distribution-label">{labels.MinValueLabel}</span>
+                                                <span class="var-panel-distribution-value">{distributionMin}</span>
+                                            </p>
+                                            <p class="var-panel-distribution-row">
+                                                <span class="var-panel-distribution-label">{labels.MaxValueLabel}</span>
+                                                <span class="var-panel-distribution-value">{distributionMax}</span>
+                                            </p>
+                                        </div>
+                                    </template>
                                 </div>
-                            </template>
-                        </div>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <div class="var-panel-tabs">
+                                <div class="var-panel-tab">{labels.AlertsTab}</div>
+                                <div class="var-panel-tab var-panel-tab_active">{labels.SettingsTab}</div>
+                            </div>
+                            <div class="var-panel-body">
+                                <div class="var-panel-field">
+                                    <div class="var-panel-label-row">
+                                        <span class="var-panel-label">{labels.TransformationLabel}</span>
+                                        <span class="var-panel-info-badge">
+                                            <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                        </span>
+                                    </div>
+                                    <lightning-combobox
+                                        variant="label-hidden"
+                                        value={activeTransformation}
+                                        options={transformationOptions}
+                                        onchange={handleTransformationChange}
+                                    ></lightning-combobox>
+                                </div>
+
+                                <template lwc:if={showReplaceMissingOptions}>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label var-panel-label_required">{labels.ReplaceWithLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeReplaceWith}
+                                            options={replaceWithOptions}
+                                            onchange={handleReplaceWithChange}
+                                        ></lightning-combobox>
+                                    </div>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label var-panel-label_required">{labels.GroupByLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeGroupBy}
+                                            options={groupByOptions}
+                                            onchange={handleGroupByChange}
+                                        ></lightning-combobox>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={showNumberBuckets}>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label">{labels.NumberOfBucketsLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <div class="var-panel-bucket-range">{labels.BucketRangeLabel}</div>
+                                        <div class="var-panel-slider-row">
+                                            <input type="range" min="10" max="100" step="1" value={activeBucketCount} onchange={handleBucketChange} oninput={handleBucketChange} class="var-panel-slider" />
+                                            <span class="var-panel-slider-value">{activeBucketCount}</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={showTextFrequencyChart}>
+                                    <div class="var-panel-distribution">
+                                        <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
+                                        <div class="var-freq-chart">
+                                            <div class="var-freq-axis">
+                                                <span class="var-freq-axis-label">{labels.CountAxisLabel}</span>
+                                            </div>
+                                            <template for:each={textFrequencies} for:item="row">
+                                                <div key={row.label} class="var-freq-row">
+                                                    <span class="var-freq-label">{row.label}</span>
+                                                    <div class="var-freq-bar-wrap">
+                                                        <div class="var-freq-bar" style={row.barStyle}></div>
+                                                        <span class="var-freq-count">{row.count}</span>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={showDistribution}>
+                                    <div class="var-panel-distribution">
+                                        <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
+                                        <p class="var-panel-distribution-row">
+                                            <span class="var-panel-distribution-label">{labels.MinValueLabel}</span>
+                                            <span class="var-panel-distribution-value">{distributionMin}</span>
+                                        </p>
+                                        <p class="var-panel-distribution-row">
+                                            <span class="var-panel-distribution-label">{labels.MaxValueLabel}</span>
+                                            <span class="var-panel-distribution-value">{distributionMax}</span>
+                                        </p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
                     </div>
                 </template>
                 <template lwc:else>

@@ -67,6 +67,60 @@ export const MinValueLabel = 'Minimum Value:';
 export const MaxValueLabel = 'Maximum Value:';
 export const CountAxisLabel = 'Count';
 
+// B2 — Guided panel copy (upfront explanation replaces info icons)
+// [draft — verify]
+export const B2StandardSectionTitle = 'Standard settings';
+export const B2StandardSectionSubtitle = 'Applies to every variable before training.';
+export const B2TransformSectionTitle = 'Transformation settings';
+export const B2TransformSectionSubtitle = 'Specific to how this variable is prepared.';
+
+export const B2TransformIntroTitle = 'What is a transformation?';
+export const B2TransformIntroWhat = 'A transformation reshapes raw values into a form the clustering model can compare against other variables.';
+export const B2TransformIntroWhen = 'Use one whenever the raw values are noisy, sparse, or too granular — for example dates down to the second, or numeric columns with missing rows.';
+export const B2TransformIntroWhy = 'Well-transformed inputs let the model find cleaner, more stable clusters and reduce distortion from a few extreme rows.';
+export const B2TransformIntroOutcome = 'You will see the variable represented as short categories, filled-in numbers, or day/month buckets — whichever fits its type.';
+export const B2TransformIntroRisk = 'If you skip this, missing rows may drop out of training and high-cardinality text or timestamp fields can dominate the model without adding meaning.';
+
+export const B2LabelWhatPrefix = 'What:';
+export const B2LabelWhyPrefix = 'Why:';
+export const B2LabelRiskPrefix = 'Risk if skipped:';
+
+// Per-setting hints
+export const B2TransformationWhat = 'Pick how the raw values are prepared for this variable.';
+export const B2TransformationWhy = 'The right transformation makes this variable comparable to the rest of the training set.';
+export const B2TransformationRisk = 'Leaving this as None keeps the raw values, which may push this variable out of training if the field is sparse or high-cardinality.';
+
+export const B2ReplaceWithWhat = 'Choose the value that fills in rows where this field is empty.';
+export const B2ReplaceWithWhy = 'Every training row needs a value — average or median tend to be safest for numeric fields with a normal spread.';
+export const B2ReplaceWithRisk = 'Rows with a missing value here will be dropped from training, shrinking your dataset without warning.';
+
+export const B2GroupByLabel = 'Group by categories';
+export const B2GroupByWhat = 'Pick the categories used to compute the fill-in value per group.';
+export const B2GroupByWhy = 'Grouping keeps the fill-in relevant — e.g. average revenue is more accurate per industry than across the whole table.';
+export const B2GroupByRisk = 'Without categories, one global average is used for every row, which can wash out real differences between segments.';
+
+export const B2BucketsWhat = 'Choose how many equal-width bins the numeric range is split into.';
+export const B2BucketsWhy = 'Bucketing turns a continuous number into a small set of comparable groups the model can cluster against.';
+export const B2BucketsRisk = 'Too few buckets flattens real differences; too many creates near-empty groups that add noise.';
+
+// Sample outcome previews (per transformation)
+export const B2SamplePreviewTitle = 'Sample outcome';
+export const B2SamplePreviewCaption = 'How the model will see this variable after training.';
+
+export const B2SampleReplaceBeforeLabel = 'Before';
+export const B2SampleReplaceAfterLabel = 'After';
+export const B2SampleReplaceBeforeCaption = '18% of rows missing a value';
+export const B2SampleReplaceAfterCaption = 'Filled with average per industry';
+
+export const B2SampleDayLabel = 'Day buckets';
+export const B2SampleDayCaption = '4,400+ dates collapsed into ~2,900 day buckets.';
+
+export const B2SampleMonthLabel = 'Month buckets';
+export const B2SampleMonthCaption = '4,400+ dates collapsed into 148 month buckets.';
+
+export const B2SampleTextLabel = 'Category clusters';
+export const B2SampleTextCaption = 'Free text collapsed into a small set of categories.';
+
 // Step 4 - Define Settings
 export const DefineSettingsTitleBold = 'Select an Algorithm';
 export const DefineSettingsTitleRest = 'for Your Model';

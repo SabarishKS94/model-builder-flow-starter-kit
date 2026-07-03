@@ -148,9 +148,9 @@ export default class ClusterBuilder extends LightningElement {
                 this.currentStep = stepParam;
             }
             const variantParam = (params.get('variant') || '').toLowerCase();
-            if (variantParam === 'a' || variantParam === 'b' || variantParam === 'c') {
+            if (variantParam === 'a' || variantParam === 'b' || variantParam === 'b2' || variantParam === 'c') {
                 this.variantMode = variantParam;
-                if (variantParam === 'b' && !this.activeVariableId) {
+                if ((variantParam === 'b' || variantParam === 'b2') && !this.activeVariableId) {
                     this.activeVariableId = ACCOUNT_VARIABLES[0].id;
                 }
             }
@@ -281,9 +281,9 @@ export default class ClusterBuilder extends LightningElement {
             if (v.isLargeText) iconName = 'utility:richtextindent';
             const action = this.variableActions[v.id] || null;
             const isExpanded = this.variantMode === 'c' && this.activeVariableId === v.id;
-            const isPickerActive = this.variantMode === 'b' && this.effectiveActiveVariableId === v.id;
+            const isPickerActive = (this.variantMode === 'b' || this.variantMode === 'b2') && this.effectiveActiveVariableId === v.id;
             let rowClass = 'var-row';
-            if (this.variantMode === 'b') rowClass += ' var-row_no-settings';
+            if (this.variantMode === 'b' || this.variantMode === 'b2') rowClass += ' var-row_no-settings';
             if (isSelected) rowClass += ' var-row_selected';
             if (isExpanded) rowClass += ' var-row_expanded';
             if (isPickerActive) rowClass += ' var-row_picker-active';
@@ -337,13 +337,13 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     get isVariablePanelOpen() {
-        if (this.currentStep === 3 && this.variantMode === 'b') return true;
+        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2')) return true;
         if (this.currentStep === 3 && this.variantMode === 'c') return false;
         return !!this.activeVariable;
     }
 
     get effectiveActiveVariableId() {
-        if (this.currentStep === 3 && this.variantMode === 'b') {
+        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2')) {
             return this.activeVariableId || ACCOUNT_VARIABLES[0].id;
         }
         return this.activeVariableId;
@@ -351,13 +351,16 @@ export default class ClusterBuilder extends LightningElement {
 
     get isVariantA() { return this.variantMode === 'a'; }
     get isVariantB() { return this.variantMode === 'b'; }
+    get isVariantB2() { return this.variantMode === 'b2'; }
     get isVariantC() { return this.variantMode === 'c'; }
-    get hideSettingsColumn() { return this.variantMode === 'b'; }
-    get showSettingsColumn() { return this.variantMode !== 'b'; }
-    get variableNameAsLink() { return this.variantMode === 'b'; }
+    get isVariantBLike() { return this.variantMode === 'b' || this.variantMode === 'b2'; }
+    get hideSettingsColumn() { return this.isVariantBLike; }
+    get showSettingsColumn() { return !this.isVariantBLike; }
+    get variableNameAsLink() { return this.isVariantBLike; }
     get varTableHeadClass() { return this.hideSettingsColumn ? 'var-table-head var-table-head_no-settings' : 'var-table-head'; }
     get variantAChipClass() { return `variant-chip${this.isVariantA ? ' variant-chip_active' : ''}`; }
     get variantBChipClass() { return `variant-chip${this.isVariantB ? ' variant-chip_active' : ''}`; }
+    get variantB2ChipClass() { return `variant-chip${this.isVariantB2 ? ' variant-chip_active' : ''}`; }
     get variantCChipClass() { return `variant-chip${this.isVariantC ? ' variant-chip_active' : ''}`; }
 
     get variantPickerOptions() {
@@ -455,6 +458,87 @@ export default class ClusterBuilder extends LightningElement {
             return `${k % 1 === 0 ? k : k.toFixed(1)}K`;
         }
         return String(n);
+    }
+
+    get showB2ReplaceSample() {
+        return this.isVariantB2 && this.activeTransformation === 'replace-missing';
+    }
+
+    get showB2DaySample() {
+        return this.isVariantB2 && this.activeTransformation === 'group-by-day';
+    }
+
+    get showB2MonthSample() {
+        return this.isVariantB2 && this.activeTransformation === 'group-by-month';
+    }
+
+    get showB2TextSample() {
+        return this.isVariantB2 && this.activeTransformation === 'text-clustering';
+    }
+
+    get showB2AnySample() {
+        return this.showB2ReplaceSample || this.showB2DaySample || this.showB2MonthSample || this.showB2TextSample;
+    }
+
+    get b2ReplaceBeforeBars() {
+        // Ragged bars with a visible gap = missing
+        return [
+            { id: 'b1', style: 'height: 62%' },
+            { id: 'b2', style: 'height: 78%' },
+            { id: 'b3', style: 'height: 0%', isMissing: true, missingClass: 'b2-mini-bar b2-mini-bar_missing' },
+            { id: 'b4', style: 'height: 54%' },
+            { id: 'b5', style: 'height: 82%' },
+            { id: 'b6', style: 'height: 0%', isMissing: true, missingClass: 'b2-mini-bar b2-mini-bar_missing' },
+            { id: 'b7', style: 'height: 70%' },
+            { id: 'b8', style: 'height: 45%' },
+        ].map((b) => ({ ...b, barClass: b.isMissing ? 'b2-mini-bar b2-mini-bar_missing' : 'b2-mini-bar' }));
+    }
+
+    get b2ReplaceAfterBars() {
+        // Filled-in bars — previously missing slots now filled at median-ish
+        return [
+            { id: 'a1', style: 'height: 62%', filled: false },
+            { id: 'a2', style: 'height: 78%', filled: false },
+            { id: 'a3', style: 'height: 60%', filled: true },
+            { id: 'a4', style: 'height: 54%', filled: false },
+            { id: 'a5', style: 'height: 82%', filled: false },
+            { id: 'a6', style: 'height: 60%', filled: true },
+            { id: 'a7', style: 'height: 70%', filled: false },
+            { id: 'a8', style: 'height: 45%', filled: false },
+        ].map((b) => ({ ...b, barClass: b.filled ? 'b2-mini-bar b2-mini-bar_filled' : 'b2-mini-bar' }));
+    }
+
+    get b2DayBuckets() {
+        return [
+            { id: 'd1', label: 'Mon 04', style: 'height: 45%' },
+            { id: 'd2', label: 'Tue 05', style: 'height: 60%' },
+            { id: 'd3', label: 'Wed 06', style: 'height: 82%' },
+            { id: 'd4', label: 'Thu 07', style: 'height: 55%' },
+            { id: 'd5', label: 'Fri 08', style: 'height: 70%' },
+            { id: 'd6', label: 'Sat 09', style: 'height: 25%' },
+            { id: 'd7', label: 'Sun 10', style: 'height: 20%' },
+        ];
+    }
+
+    get b2MonthBuckets() {
+        return [
+            { id: 'm1', label: 'Jan', style: 'height: 40%' },
+            { id: 'm2', label: 'Feb', style: 'height: 55%' },
+            { id: 'm3', label: 'Mar', style: 'height: 72%' },
+            { id: 'm4', label: 'Apr', style: 'height: 88%' },
+            { id: 'm5', label: 'May', style: 'height: 62%' },
+            { id: 'm6', label: 'Jun', style: 'height: 45%' },
+        ];
+    }
+
+    get b2TextCategories() {
+        return [
+            { id: 't1', label: 'Renewal question', count: '32%' },
+            { id: 't2', label: 'Product issue', count: '24%' },
+            { id: 't3', label: 'Billing dispute', count: '18%' },
+            { id: 't4', label: 'Onboarding help', count: '14%' },
+            { id: 't5', label: 'Other', count: '12%' },
+        ];
     }
 
     get replaceWithOptions() {
@@ -701,7 +785,7 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     handleCloseVariablePanel() {
-        if (this.variantMode === 'b' && this.currentStep === 3) return;
+        if ((this.variantMode === 'b' || this.variantMode === 'b2') && this.currentStep === 3) return;
         this.activeVariableId = null;
     }
 
@@ -710,7 +794,7 @@ export default class ClusterBuilder extends LightningElement {
         if (!mode || mode === this.variantMode) return;
         this.variantMode = mode;
         this.variantPickerOpen = false;
-        if (mode === 'b') {
+        if (mode === 'b' || mode === 'b2') {
             if (!this.activeVariableId) {
                 this.activeVariableId = ACCOUNT_VARIABLES[0].id;
             }
