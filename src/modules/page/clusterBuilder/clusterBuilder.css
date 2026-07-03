@@ -17,12 +17,6 @@
     position: relative;
 }
 
-.builder-shell_locked .builder-header-nav > *:not(.lock-overlay),
-.builder-shell_locked .builder-toolbar .toolbar-left > *:not(.lock-overlay),
-.builder-shell_locked .builder-toolbar .toolbar-right > *:not(.lock-overlay),
-.builder-shell_locked .builder-sidebar > *:not(.lock-overlay) {
-    opacity: 0.55;
-}
 
 .lock-overlay {
     position: absolute;
