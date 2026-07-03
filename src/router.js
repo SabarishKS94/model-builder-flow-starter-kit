@@ -24,6 +24,7 @@ import {
 const DEFAULT_TITLE = 'Salesforce';
 
 const HASH_MODE = import.meta.env.VITE_ROUTER_MODE === 'hash';
+const LANDING_PATH = import.meta.env.VITE_LANDING_PATH || '';
 
 const listeners = new Set();
 
@@ -135,19 +136,34 @@ function getTitleForRoute(route) {
     : route.title;
 }
 
+function landingFallbackTarget() {
+  return LANDING_PATH || getActiveAppForBuild().defaultPath;
+}
+
+function writeLandingUrl() {
+  const target = landingFallbackTarget();
+  if (!target) return false;
+  const [pathOnly, ...queryParts] = target.split('?');
+  if (!getAppForPath(pathOnly)) return false;
+  const query = queryParts.join('?');
+  const url = HASH_MODE
+    ? `${hashUrlFromLogicalPath(pathOnly)}${query ? `?${query}` : ''}`
+    : `${pathOnly}${query ? `?${query}` : ''}`;
+  history.replaceState({}, '', url);
+  return true;
+}
+
 function notify() {
   const path = getLogicalPath();
   const app = getAppForPath(path);
 
   if (!app) {
-    const target = getActiveAppForBuild().defaultPath;
-    if (!getAppForPath(target)) {
+    if (!writeLandingUrl()) {
       console.error(
-        `[router] defaultPath "${target}" does not match any app prefix. Check apps.config.js.`
+        `[router] landing "${landingFallbackTarget()}" does not match any app prefix. Check apps.config.js.`
       );
       return;
     }
-    writeUrl(target, true);
     return notify();
   }
 
@@ -179,7 +195,7 @@ export function subscribe(callback) {
   listeners.add(callback);
   const initialPath = getLogicalPath();
   if (!getAppForPath(initialPath)) {
-    writeUrl(getActiveAppForBuild().defaultPath, true);
+    writeLandingUrl();
   }
   const route = matchRoute(getLogicalPath());
   document.title = getTitleForRoute(route);

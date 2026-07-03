@@ -132,6 +132,7 @@ export default class ClusterBuilder extends LightningElement {
     @track activeArticleId = null;
     @track isTraining = false;
     @track isAgentforceOpen = false;
+    @track isLocked = import.meta.env.VITE_LOCKED === '1';
 
     connectedCallback() {
         try {
@@ -154,9 +155,18 @@ export default class ClusterBuilder extends LightningElement {
                     this.activeVariableId = ACCOUNT_VARIABLES[0].id;
                 }
             }
+            if (params.get('locked') === '1') {
+                this.isLocked = true;
+            } else if (params.get('locked') === '0') {
+                this.isLocked = false;
+            }
         } catch (e) {
             // ignore
         }
+    }
+
+    get shellClass() {
+        return this.isLocked ? 'builder-shell builder-shell_locked' : 'builder-shell';
     }
 
     get steps() {
@@ -560,6 +570,83 @@ export default class ClusterBuilder extends LightningElement {
             { id: 't3', label: 'Billing dispute', count: '18%' },
             { id: 't4', label: 'Onboarding help', count: '14%' },
             { id: 't5', label: 'Other', count: '12%' },
+        ];
+    }
+
+    get dTextClusters() {
+        const rows = [
+            { id: 'tc1', label: 'Shipping & delivery issues', value: 28, tone: 'primary' },
+            { id: 'tc2', label: 'Product quality complaints', value: 22, tone: 'secondary' },
+            { id: 'tc3', label: 'Billing & refund requests', value: 17, tone: 'primary' },
+            { id: 'tc4', label: 'Positive feedback & praise', value: 13, tone: 'secondary' },
+            { id: 'tc5', label: 'App & login problems', value: 10, tone: 'primary' },
+            { id: 'tc6', label: 'Feature requests', value: 6, tone: 'secondary' },
+            { id: 'tc7', label: 'Other / uncategorized', value: 4, tone: 'primary' },
+        ];
+        return this._toEclairRows(rows, '%');
+    }
+
+    get dDayEclair() {
+        const rows = [
+            { id: 'd1', label: 'Mon 04', value: 620, tone: 'primary' },
+            { id: 'd2', label: 'Tue 05', value: 810, tone: 'secondary' },
+            { id: 'd3', label: 'Wed 06', value: 1120, tone: 'primary' },
+            { id: 'd4', label: 'Thu 07', value: 740, tone: 'secondary' },
+            { id: 'd5', label: 'Fri 08', value: 990, tone: 'primary' },
+            { id: 'd6', label: 'Sat 09', value: 350, tone: 'secondary' },
+            { id: 'd7', label: 'Sun 10', value: 280, tone: 'primary' },
+        ];
+        return this._toEclairRows(rows, '');
+    }
+
+    get dMonthEclair() {
+        const rows = [
+            { id: 'm1', label: 'Jan', value: 12000, tone: 'primary' },
+            { id: 'm2', label: 'Feb', value: 16500, tone: 'secondary' },
+            { id: 'm3', label: 'Mar', value: 21800, tone: 'primary' },
+            { id: 'm4', label: 'Apr', value: 26400, tone: 'secondary' },
+            { id: 'm5', label: 'May', value: 18700, tone: 'primary' },
+            { id: 'm6', label: 'Jun', value: 13500, tone: 'secondary' },
+        ];
+        return this._toEclairRows(rows, '');
+    }
+
+    get dReplaceEclair() {
+        // Before / After stacked as two rows in the same chart
+        const rows = [
+            { id: 'r-before', label: 'Before', value: 82, tone: 'secondary', display: '82% filled' },
+            { id: 'r-after', label: 'After', value: 100, tone: 'primary', display: '100% filled' },
+        ];
+        return this._toEclairRows(rows, '');
+    }
+
+    _toEclairRows(rows, suffix) {
+        const max = Math.max(...rows.map((r) => r.value));
+        return rows.map((r) => ({
+            ...r,
+            barStyle: `width: ${Math.max(2, (r.value / max) * 100)}%`,
+            barClass: `eclair-bar eclair-bar_${r.tone}`,
+            displayValue: r.display || this._formatCompact(r.value, suffix),
+        }));
+    }
+
+    _formatCompact(n, suffix) {
+        if (suffix === '%') return `${n}%`;
+        if (n >= 1000) {
+            const k = n / 1000;
+            return `${k % 1 === 0 ? k : k.toFixed(1)}K`;
+        }
+        return String(n);
+    }
+
+    get dEclairTicks() {
+        // Simple 5-tick axis, purely decorative
+        return [
+            { id: 't0', label: '0' },
+            { id: 't1', label: '25%' },
+            { id: 't2', label: '50%' },
+            { id: 't3', label: '75%' },
+            { id: 't4', label: '100%' },
         ];
     }
 
