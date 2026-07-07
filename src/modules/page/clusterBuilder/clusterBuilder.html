@@ -3,11 +3,8 @@
         <!-- Prototype variant switcher (demo only) -->
         <div class="variant-switcher" role="group" aria-label="Prototype variant">
             <span class="variant-switcher-label">Variant</span>
-            <button type="button" class={variantAChipClass} data-mode="a" onclick={handleVariantChange}>A · Chevron</button>
-            <button type="button" class={variantBChipClass} data-mode="b" onclick={handleVariantChange}>B · Docked panel</button>
-            <button type="button" class={variantB2ChipClass} data-mode="b2" onclick={handleVariantChange}>B2 · Guided panel</button>
-            <button type="button" class={variantCChipClass} data-mode="c" onclick={handleVariantChange}>C · Inline expand</button>
-            <button type="button" class={variantDChipClass} data-mode="d" onclick={handleVariantChange}>D · Numbered guide</button>
+            <button type="button" class={variantFChipClass} data-mode="f" onclick={handleVariantChange}>Before/After chart</button>
+            <button type="button" class={variantGChipClass} data-mode="g" onclick={handleVariantChange}>Sample outcome</button>
         </div>
         <!-- Dark Header Bar -->
         <div class="builder-header-nav">
@@ -647,6 +644,81 @@
                                 </div>
                             </div>
                         </template>
+                        <template lwc:elseif={isVariantE}>
+                            <div class="var-panel-header var-panel-header_picker">
+                                <span class="var-panel-header-label">Variable</span>
+                                <div class="variant-picker">
+                                    <button type="button" class="variant-picker-btn" onclick={handleToggleVariantPicker} aria-haspopup="listbox" aria-expanded={variantPickerOpen}>
+                                        <span class="variant-picker-btn-label">{variantPickerButtonLabel}</span>
+                                        <lightning-icon icon-name="utility:down" size="xx-small" variant="bare" class="variant-picker-btn-icon"></lightning-icon>
+                                    </button>
+                                    <template lwc:if={variantPickerOpen}>
+                                        <div class="variant-picker-dropdown">
+                                            <div class="variant-picker-search">
+                                                <lightning-input variant="label-hidden" type="search" placeholder="Search variables..." value={variantPickerSearch} onchange={handleVariantPickerSearch}></lightning-input>
+                                            </div>
+                                            <div class="variant-picker-list" role="listbox">
+                                                <template for:each={variantPickerOptions} for:item="opt">
+                                                    <button type="button" key={opt.id} class={opt.itemClass} data-id={opt.id} onclick={handleVariantPickerSelect} role="option">
+                                                        {opt.name}
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                        <template lwc:elseif={isVariantF}>
+                            <div class="var-panel-header var-panel-header_picker">
+                                <span class="var-panel-header-label">Variable</span>
+                                <div class="variant-picker">
+                                    <button type="button" class="variant-picker-btn" onclick={handleToggleVariantPicker} aria-haspopup="listbox" aria-expanded={variantPickerOpen}>
+                                        <span class="variant-picker-btn-label">{variantPickerButtonLabel}</span>
+                                        <lightning-icon icon-name="utility:down" size="xx-small" variant="bare" class="variant-picker-btn-icon"></lightning-icon>
+                                    </button>
+                                    <template lwc:if={variantPickerOpen}>
+                                        <div class="variant-picker-dropdown">
+                                            <div class="variant-picker-search">
+                                                <lightning-input variant="label-hidden" type="search" placeholder="Search variables..." value={variantPickerSearch} onchange={handleVariantPickerSearch}></lightning-input>
+                                            </div>
+                                            <div class="variant-picker-list" role="listbox">
+                                                <template for:each={variantPickerOptions} for:item="opt">
+                                                    <button type="button" key={opt.id} class={opt.itemClass} data-id={opt.id} onclick={handleVariantPickerSelect} role="option">
+                                                        {opt.name}
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                        <template lwc:elseif={isVariantG}>
+                            <div class="var-panel-header var-panel-header_picker">
+                                <span class="var-panel-header-label">Variable</span>
+                                <div class="variant-picker">
+                                    <button type="button" class="variant-picker-btn" onclick={handleToggleVariantPicker} aria-haspopup="listbox" aria-expanded={variantPickerOpen}>
+                                        <span class="variant-picker-btn-label">{variantPickerButtonLabel}</span>
+                                        <lightning-icon icon-name="utility:down" size="xx-small" variant="bare" class="variant-picker-btn-icon"></lightning-icon>
+                                    </button>
+                                    <template lwc:if={variantPickerOpen}>
+                                        <div class="variant-picker-dropdown">
+                                            <div class="variant-picker-search">
+                                                <lightning-input variant="label-hidden" type="search" placeholder="Search variables..." value={variantPickerSearch} onchange={handleVariantPickerSearch}></lightning-input>
+                                            </div>
+                                            <div class="variant-picker-list" role="listbox">
+                                                <template for:each={variantPickerOptions} for:item="opt">
+                                                    <button type="button" key={opt.id} class={opt.itemClass} data-id={opt.id} onclick={handleVariantPickerSelect} role="option">
+                                                        {opt.name}
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
                         <template lwc:else>
                             <div class="var-panel-header">
                                 <h3 class="var-panel-title">{activeVariable.name}</h3>
@@ -887,10 +959,14 @@
                                                 <span class="eclair-chart-caption">{dSampleTitle}</span>
                                                 <span class="eclair-chart-example-badge">Example</span>
                                             </div>
+                                            <div class="eclair-chart-body">
                                             <div class="eclair-chart-axis">
-                                                <template for:each={dEclairTicks} for:item="t">
-                                                    <span key={t.id} class="eclair-tick">{t.label}</span>
-                                                </template>
+                                                <span class="eclair-axis-spacer"></span>
+                                                <div class="eclair-axis-ticks">
+                                                    <template for:each={dEclairTicks} for:item="t">
+                                                        <span key={t.id} class="eclair-tick">{t.label}</span>
+                                                    </template>
+                                                </div>
                                             </div>
                                             <div class="eclair-chart-plot">
                                                 <template lwc:if={showDReplaceSample}>
@@ -942,7 +1018,657 @@
                                                     </template>
                                                 </template>
                                             </div>
+                                            </div>
                                         </div>
+                                    </template>
+                                </div>
+
+                                <template lwc:if={showReplaceMissingOptions}>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label var-panel-label_required">{labels.ReplaceWithLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeReplaceWith}
+                                            options={replaceWithOptions}
+                                            onchange={handleReplaceWithChange}
+                                        ></lightning-combobox>
+                                    </div>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label var-panel-label_required">{labels.GroupByLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeGroupBy}
+                                            options={groupByOptions}
+                                            onchange={handleGroupByChange}
+                                        ></lightning-combobox>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={showNumberBuckets}>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label">{labels.NumberOfBucketsLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <div class="var-panel-bucket-range">{labels.BucketRangeLabel}</div>
+                                        <div class="var-panel-slider-row">
+                                            <input type="range" min="10" max="100" step="1" value={activeBucketCount} onchange={handleBucketChange} oninput={handleBucketChange} class="var-panel-slider" />
+                                            <span class="var-panel-slider-value">{activeBucketCount}</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={showDistribution}>
+                                    <hr class="var-panel-divider" />
+                                    <div class="var-panel-distribution">
+                                        <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
+                                        <p class="var-panel-distribution-row">
+                                            <span class="var-panel-distribution-label">{labels.MinValueLabel}</span>
+                                            <span class="var-panel-distribution-value">{distributionMin}</span>
+                                        </p>
+                                        <p class="var-panel-distribution-row">
+                                            <span class="var-panel-distribution-label">{labels.MaxValueLabel}</span>
+                                            <span class="var-panel-distribution-value">{distributionMax}</span>
+                                        </p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:elseif={isVariantE}>
+                            <!-- E: Same layout as D, but the sample preview is ALWAYS visible.
+                                 When no transformation is picked, it defaults to the first applicable
+                                 transformation for the variable type — communicating the effect
+                                 with just the subtle chart visual. -->
+                            <div class="var-panel-tabs">
+                                <div class="var-panel-tab var-panel-tab_active">{labels.SettingsTab}</div>
+                                <div class="var-panel-tab">{labels.AlertsTab}</div>
+                            </div>
+                            <div class="var-panel-body">
+                                <div class="var-panel-field">
+                                    <div class="var-panel-label-row">
+                                        <span class="var-panel-label">{labels.TransformationLabel}</span>
+                                        <span class="var-panel-info-badge">
+                                            <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                        </span>
+                                    </div>
+                                    <lightning-combobox
+                                        variant="label-hidden"
+                                        value={activeTransformation}
+                                        options={transformationOptions}
+                                        onchange={handleTransformationChange}
+                                    ></lightning-combobox>
+
+                                    <!-- Chart preview: Raw + After stacked pair -->
+                                    <template lwc:if={showEChartSample}>
+                                        <div class="eclair-stack">
+                                            <!-- Raw distribution -->
+                                            <div class="eclair-chart eclair-chart_always eclair-chart_raw">
+                                                <div class="eclair-chart-caption-row">
+                                                    <span class="eclair-chart-caption">{eRawTitle}</span>
+                                                    <span class="eclair-chart-stage-badge eclair-chart-stage-badge_raw">Raw</span>
+                                                </div>
+                                                <div class="eclair-chart-body">
+                                                    <div class="eclair-chart-axis">
+                                                        <span class="eclair-axis-spacer"></span>
+                                                        <div class="eclair-axis-ticks">
+                                                            <template for:each={dEclairTicks} for:item="t">
+                                                                <span key={t.id} class="eclair-tick">{t.label}</span>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="eclair-chart-plot">
+                                                        <template lwc:if={showEReplaceSample}>
+                                                            <template for:each={rawReplaceEclair} for:item="row">
+                                                                <div key={row.id} class="eclair-row">
+                                                                    <span class="eclair-row-label">{row.label}</span>
+                                                                    <div class="eclair-row-track">
+                                                                        <div class={row.barClass} style={row.barStyle}>
+                                                                            <span class="eclair-row-value">{row.displayValue}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showEDaySample}>
+                                                            <template for:each={rawDayEclair} for:item="row">
+                                                                <div key={row.id} class="eclair-row">
+                                                                    <span class="eclair-row-label">{row.label}</span>
+                                                                    <div class="eclair-row-track">
+                                                                        <div class={row.barClass} style={row.barStyle}>
+                                                                            <span class="eclair-row-value">{row.displayValue}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showEMonthSample}>
+                                                            <template for:each={rawMonthEclair} for:item="row">
+                                                                <div key={row.id} class="eclair-row">
+                                                                    <span class="eclair-row-label">{row.label}</span>
+                                                                    <div class="eclair-row-track">
+                                                                        <div class={row.barClass} style={row.barStyle}>
+                                                                            <span class="eclair-row-value">{row.displayValue}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showETextSample}>
+                                                            <template for:each={rawTextEclair} for:item="row">
+                                                                <div key={row.id} class="eclair-row">
+                                                                    <span class="eclair-row-label">{row.label}</span>
+                                                                    <div class="eclair-row-track">
+                                                                        <div class={row.barClass} style={row.barStyle}>
+                                                                            <span class="eclair-row-value">{row.displayValue}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Arrow indicating transformation direction -->
+                                            <div class="eclair-stack-arrow" aria-hidden="true">
+                                                <lightning-icon icon-name="utility:down" size="x-small" variant="bare"></lightning-icon>
+                                            </div>
+
+                                            <!-- Post-transformation preview -->
+                                            <div class="eclair-chart eclair-chart_always eclair-chart_after">
+                                                <div class="eclair-chart-caption-row">
+                                                    <span class="eclair-chart-caption">{eAfterTitle}</span>
+                                                    <span class="eclair-chart-stage-badge eclair-chart-stage-badge_after">Example</span>
+                                                </div>
+                                                <div class="eclair-chart-body">
+                                                    <div class="eclair-chart-axis">
+                                                        <span class="eclair-axis-spacer"></span>
+                                                        <div class="eclair-axis-ticks">
+                                                            <template for:each={dEclairTicks} for:item="t">
+                                                                <span key={t.id} class="eclair-tick">{t.label}</span>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <div class="eclair-chart-plot">
+                                                        <template lwc:if={showEReplaceSample}>
+                                                            <div class="eclair-row">
+                                                                <span class="eclair-row-label">{dReplaceStacked.label}</span>
+                                                                <div class="eclair-row-track">
+                                                                    <div class="eclair-bar-stack">
+                                                                        <div class="eclair-bar-seg eclair-bar-seg_original" style={dReplaceStacked.originalStyle}>
+                                                                            <span class="eclair-bar-seg-label">{dReplaceStacked.originalLabel}</span>
+                                                                        </div>
+                                                                        <div class="eclair-bar-seg eclair-bar-seg_imputed" style={dReplaceStacked.imputedStyle}>
+                                                                            <span class="eclair-bar-seg-label">{dReplaceStacked.imputedLabel}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                        <template lwc:if={showEDaySample}>
+                                                            <template for:each={dDayEclair} for:item="row">
+                                                                <div key={row.id} class="eclair-row">
+                                                                    <span class="eclair-row-label">{row.label}</span>
+                                                                    <div class="eclair-row-track">
+                                                                        <div class={row.barClass} style={row.barStyle}>
+                                                                            <span class="eclair-row-value">{row.displayValue}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showEMonthSample}>
+                                                            <template for:each={dMonthEclair} for:item="row">
+                                                                <div key={row.id} class="eclair-row">
+                                                                    <span class="eclair-row-label">{row.label}</span>
+                                                                    <div class="eclair-row-track">
+                                                                        <div class={row.barClass} style={row.barStyle}>
+                                                                            <span class="eclair-row-value">{row.displayValue}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showETextSample}>
+                                                            <template for:each={dTextClusters} for:item="row">
+                                                                <div key={row.id} class="eclair-row">
+                                                                    <span class="eclair-row-label">{row.label}</span>
+                                                                    <div class="eclair-row-track">
+                                                                        <div class={row.barClass} style={row.barStyle}>
+                                                                            <span class="eclair-row-value">{row.displayValue}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <template lwc:if={showReplaceMissingOptions}>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label var-panel-label_required">{labels.ReplaceWithLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeReplaceWith}
+                                            options={replaceWithOptions}
+                                            onchange={handleReplaceWithChange}
+                                        ></lightning-combobox>
+                                    </div>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label var-panel-label_required">{labels.GroupByLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeGroupBy}
+                                            options={groupByOptions}
+                                            onchange={handleGroupByChange}
+                                        ></lightning-combobox>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={showNumberBuckets}>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label">{labels.NumberOfBucketsLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <div class="var-panel-bucket-range">{labels.BucketRangeLabel}</div>
+                                        <div class="var-panel-slider-row">
+                                            <input type="range" min="10" max="100" step="1" value={activeBucketCount} onchange={handleBucketChange} oninput={handleBucketChange} class="var-panel-slider" />
+                                            <span class="var-panel-slider-value">{activeBucketCount}</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={showDistribution}>
+                                    <hr class="var-panel-divider" />
+                                    <div class="var-panel-distribution">
+                                        <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
+                                        <p class="var-panel-distribution-row">
+                                            <span class="var-panel-distribution-label">{labels.MinValueLabel}</span>
+                                            <span class="var-panel-distribution-value">{distributionMin}</span>
+                                        </p>
+                                        <p class="var-panel-distribution-row">
+                                            <span class="var-panel-distribution-label">{labels.MaxValueLabel}</span>
+                                            <span class="var-panel-distribution-value">{distributionMax}</span>
+                                        </p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:elseif={isVariantF}>
+                            <!-- F: Same Eclair chart internals as E, wrapped in real
+                                 slds-card containers with slds-card__header and __body.
+                                 Only the outer chrome differs — bars, axis, and rows
+                                 are the eclair-* elements. -->
+                            <div class="var-panel-tabs">
+                                <div class="var-panel-tab var-panel-tab_active">{labels.SettingsTab}</div>
+                                <div class="var-panel-tab">{labels.AlertsTab}</div>
+                            </div>
+                            <div class="var-panel-body">
+                                <div class="var-panel-field">
+                                    <div class="var-panel-label-row">
+                                        <span class="var-panel-label">{labels.TransformationLabel}</span>
+                                        <span class="var-panel-info-badge">
+                                            <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                        </span>
+                                    </div>
+                                    <lightning-combobox
+                                        variant="label-hidden"
+                                        value={activeTransformation}
+                                        options={transformationOptions}
+                                        onchange={handleTransformationChange}
+                                    ></lightning-combobox>
+
+                                    <template lwc:if={showFAnySample}>
+                                        <div class="slds-m-top_medium">
+                                            <!-- Raw card -->
+                                            <article class="f-card f-card_raw">
+                                                <header class="f-card__header">
+                                                    <span class="f-card__title">{fRawTitle}</span>
+                                                    <lightning-badge label="Raw"></lightning-badge>
+                                                </header>
+                                                <div class="f-card__body">
+                                                    <div class="eclair-chart eclair-chart_bare">
+                                                        <div class="eclair-chart-body">
+                                                            <div class="eclair-chart-axis">
+                                                                <span class="eclair-axis-spacer"></span>
+                                                                <div class="eclair-axis-ticks">
+                                                                    <template for:each={dEclairTicks} for:item="t">
+                                                                        <span key={t.id} class="eclair-tick">{t.label}</span>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+                                                            <div class="eclair-chart-plot">
+                                                                <template lwc:if={showFReplaceSample}>
+                                                                    <template for:each={rawReplaceEclair} for:item="row">
+                                                                        <div key={row.id} class="eclair-row">
+                                                                            <span class="eclair-row-label">{row.label}</span>
+                                                                            <div class="eclair-row-track">
+                                                                                <div class={row.barClass} style={row.barStyle}>
+                                                                                    <span class="eclair-row-value">{row.displayValue}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </template>
+                                                                <template lwc:if={showFDaySample}>
+                                                                    <template for:each={rawDayEclair} for:item="row">
+                                                                        <div key={row.id} class="eclair-row">
+                                                                            <span class="eclair-row-label">{row.label}</span>
+                                                                            <div class="eclair-row-track">
+                                                                                <div class={row.barClass} style={row.barStyle}>
+                                                                                    <span class="eclair-row-value">{row.displayValue}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </template>
+                                                                <template lwc:if={showFMonthSample}>
+                                                                    <template for:each={rawMonthEclair} for:item="row">
+                                                                        <div key={row.id} class="eclair-row">
+                                                                            <span class="eclair-row-label">{row.label}</span>
+                                                                            <div class="eclair-row-track">
+                                                                                <div class={row.barClass} style={row.barStyle}>
+                                                                                    <span class="eclair-row-value">{row.displayValue}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </template>
+                                                                <template lwc:if={showFTextSample}>
+                                                                    <template for:each={rawTextEclair} for:item="row">
+                                                                        <div key={row.id} class="eclair-row">
+                                                                            <span class="eclair-row-label">{row.label}</span>
+                                                                            <div class="eclair-row-track">
+                                                                                <div class={row.barClass} style={row.barStyle}>
+                                                                                    <span class="eclair-row-value">{row.displayValue}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </article>
+
+                                            <!-- Arrow -->
+                                            <div class="slds-align_absolute-center slds-m-vertical_xx-small">
+                                                <lightning-icon icon-name="utility:down" size="x-small" variant="bare" alternative-text="Transforms to"></lightning-icon>
+                                            </div>
+
+                                            <!-- After card -->
+                                            <article class="f-card f-card_after">
+                                                <header class="f-card__header">
+                                                    <span class="f-card__title">{fAfterTitle}</span>
+                                                    <lightning-badge label="Example" class="f-badge_example"></lightning-badge>
+                                                </header>
+                                                <div class="f-card__body">
+                                                    <div class="eclair-chart eclair-chart_bare">
+                                                        <div class="eclair-chart-body">
+                                                            <div class="eclair-chart-axis">
+                                                                <span class="eclair-axis-spacer"></span>
+                                                                <div class="eclair-axis-ticks">
+                                                                    <template for:each={dEclairTicks} for:item="t">
+                                                                        <span key={t.id} class="eclair-tick">{t.label}</span>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+                                                            <div class="eclair-chart-plot">
+                                                                <template lwc:if={showFReplaceSample}>
+                                                                    <div class="eclair-row">
+                                                                        <span class="eclair-row-label">{dReplaceStacked.label}</span>
+                                                                        <div class="eclair-row-track">
+                                                                            <div class="eclair-bar-stack eclair-bar-stack_tinted">
+                                                                                <div class="eclair-bar-seg eclair-bar-seg_original" style={dReplaceStacked.originalStyle}>
+                                                                                    <span class="eclair-bar-seg-label">{dReplaceStacked.originalLabel}</span>
+                                                                                </div>
+                                                                                <div class="eclair-bar-seg eclair-bar-seg_imputed-tinted" style={dReplaceStacked.imputedStyle}>
+                                                                                    <span class="eclair-bar-seg-label">{dReplaceStacked.imputedLabel}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="f-stack-legend">
+                                                                        <span class="f-stack-legend-item">
+                                                                            <span class="f-stack-legend-swatch f-stack-legend-swatch_original"></span>
+                                                                            {dReplaceStacked.legendOriginal}
+                                                                        </span>
+                                                                        <span class="f-stack-legend-item">
+                                                                            <span class="f-stack-legend-swatch f-stack-legend-swatch_imputed"></span>
+                                                                            {dReplaceStacked.legendImputed}
+                                                                        </span>
+                                                                    </div>
+                                                                </template>
+                                                                <template lwc:if={showFDaySample}>
+                                                                    <template for:each={dDayEclair} for:item="row">
+                                                                        <div key={row.id} class="eclair-row">
+                                                                            <span class="eclair-row-label">{row.label}</span>
+                                                                            <div class="eclair-row-track">
+                                                                                <div class={row.barClass} style={row.barStyle}>
+                                                                                    <span class="eclair-row-value">{row.displayValue}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </template>
+                                                                <template lwc:if={showFMonthSample}>
+                                                                    <template for:each={dMonthEclair} for:item="row">
+                                                                        <div key={row.id} class="eclair-row">
+                                                                            <span class="eclair-row-label">{row.label}</span>
+                                                                            <div class="eclair-row-track">
+                                                                                <div class={row.barClass} style={row.barStyle}>
+                                                                                    <span class="eclair-row-value">{row.displayValue}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </template>
+                                                                <template lwc:if={showFTextSample}>
+                                                                    <template for:each={dTextClusters} for:item="row">
+                                                                        <div key={row.id} class="eclair-row">
+                                                                            <span class="eclair-row-label">{row.label}</span>
+                                                                            <div class="eclair-row-track">
+                                                                                <div class={row.barClass} style={row.barStyle}>
+                                                                                    <span class="eclair-row-value">{row.displayValue}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </template>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <template lwc:if={showReplaceMissingOptions}>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label var-panel-label_required">{labels.ReplaceWithLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeReplaceWith}
+                                            options={replaceWithOptions}
+                                            onchange={handleReplaceWithChange}
+                                        ></lightning-combobox>
+                                    </div>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label var-panel-label_required">{labels.GroupByLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <lightning-combobox
+                                            variant="label-hidden"
+                                            value={activeGroupBy}
+                                            options={groupByOptions}
+                                            onchange={handleGroupByChange}
+                                        ></lightning-combobox>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={showNumberBuckets}>
+                                    <div class="var-panel-field">
+                                        <div class="var-panel-label-row">
+                                            <span class="var-panel-label">{labels.NumberOfBucketsLabel}</span>
+                                            <span class="var-panel-info-badge">
+                                                <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                            </span>
+                                        </div>
+                                        <div class="var-panel-bucket-range">{labels.BucketRangeLabel}</div>
+                                        <div class="var-panel-slider-row">
+                                            <input type="range" min="10" max="100" step="1" value={activeBucketCount} onchange={handleBucketChange} oninput={handleBucketChange} class="var-panel-slider" />
+                                            <span class="var-panel-slider-value">{activeBucketCount}</span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={showDistribution}>
+                                    <hr class="var-panel-divider" />
+                                    <div class="var-panel-distribution">
+                                        <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
+                                        <p class="var-panel-distribution-row">
+                                            <span class="var-panel-distribution-label">{labels.MinValueLabel}</span>
+                                            <span class="var-panel-distribution-value">{distributionMin}</span>
+                                        </p>
+                                        <p class="var-panel-distribution-row">
+                                            <span class="var-panel-distribution-label">{labels.MaxValueLabel}</span>
+                                            <span class="var-panel-distribution-value">{distributionMax}</span>
+                                        </p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:elseif={isVariantG}>
+                            <!-- G: "Sample outcome" — two grey panels side-by-side with
+                                 vertical mini bar charts and a caption per side. -->
+                            <div class="var-panel-tabs">
+                                <div class="var-panel-tab var-panel-tab_active">{labels.SettingsTab}</div>
+                                <div class="var-panel-tab">{labels.AlertsTab}</div>
+                            </div>
+                            <div class="var-panel-body">
+                                <div class="var-panel-field">
+                                    <div class="var-panel-label-row">
+                                        <span class="var-panel-label">{labels.TransformationLabel}</span>
+                                        <span class="var-panel-info-badge">
+                                            <lightning-icon icon-name="utility:info" size="xx-small" variant="inverse"></lightning-icon>
+                                        </span>
+                                    </div>
+                                    <lightning-combobox
+                                        variant="label-hidden"
+                                        value={activeTransformation}
+                                        options={transformationOptions}
+                                        onchange={handleTransformationChange}
+                                    ></lightning-combobox>
+
+                                    <template lwc:if={showGAnySample}>
+                                        <section class="g-outcome">
+                                            <header class="g-outcome__head">
+                                                <h4 class="g-outcome__title">Sample outcome</h4>
+                                                <p class="g-outcome__sub">How the model will see this variable after training.</p>
+                                            </header>
+                                            <div class="g-outcome__grid">
+                                                <article class="g-panel">
+                                                    <div class="g-panel__label">BEFORE</div>
+                                                    <div class="g-panel__chart">
+                                                        <template lwc:if={showGReplaceSample}>
+                                                            <template for:each={gReplaceBefore} for:item="b">
+                                                                <div key={b.id} class={b.cls} style={b.style}></div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showGDaySample}>
+                                                            <template for:each={gDayBefore} for:item="b">
+                                                                <div key={b.id} class={b.cls} style={b.style}></div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showGMonthSample}>
+                                                            <template for:each={gMonthBefore} for:item="b">
+                                                                <div key={b.id} class={b.cls} style={b.style}></div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showGTextSample}>
+                                                            <template for:each={gTextBefore} for:item="b">
+                                                                <div key={b.id} class={b.cls} style={b.style}></div>
+                                                            </template>
+                                                        </template>
+                                                    </div>
+                                                    <p class="g-panel__caption">{gBeforeCaption}</p>
+                                                </article>
+                                                <article class="g-panel">
+                                                    <div class="g-panel__label">AFTER</div>
+                                                    <div class="g-panel__chart">
+                                                        <template lwc:if={showGReplaceSample}>
+                                                            <template for:each={gReplaceAfter} for:item="b">
+                                                                <div key={b.id} class={b.cls} style={b.style}></div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showGDaySample}>
+                                                            <template for:each={gDayAfter} for:item="b">
+                                                                <div key={b.id} class={b.cls} style={b.style}></div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showGMonthSample}>
+                                                            <template for:each={gMonthAfter} for:item="b">
+                                                                <div key={b.id} class={b.cls} style={b.style}></div>
+                                                            </template>
+                                                        </template>
+                                                        <template lwc:if={showGTextSample}>
+                                                            <template for:each={gTextAfter} for:item="b">
+                                                                <div key={b.id} class={b.cls} style={b.style}></div>
+                                                            </template>
+                                                        </template>
+                                                    </div>
+                                                    <p class="g-panel__caption">{gAfterCaption}</p>
+                                                </article>
+                                            </div>
+                                            <template lwc:if={showGSkipRisk}>
+                                                <div class="skip-risk" role="note">
+                                                    <lightning-icon icon-name="utility:warning" size="xx-small" variant="warning" alternative-text="Risk"></lightning-icon>
+                                                    <div class="skip-risk__body">
+                                                        <span class="skip-risk__label">Risk if you skip this transformation</span>
+                                                        <p class="skip-risk__text">{gSkipRisk}</p>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </section>
                                     </template>
                                 </div>
 

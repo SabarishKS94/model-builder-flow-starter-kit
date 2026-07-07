@@ -12,39 +12,15 @@ const STEPS = [
 ];
 
 const ACCOUNT_VARIABLES = [
-    { id: 'v1', name: 'Account_ExternalId', type: 'number', min: 1000, max: 99999 },
     { id: 'v2', name: 'Annual Revenue', type: 'number', selected: true, action: 'Replace Missing Values', min: 50000, max: 12500000 },
-    { id: 'v3', name: 'Billing Latitude', type: 'number', min: 39.833644, max: 43.976418 },
-    { id: 'v4', name: 'Billing Longitude', type: 'number', min: -122.418301, max: -71.058884 },
     { id: 'v5', name: 'Employees', type: 'number', min: 1, max: 250000 },
     { id: 'v6', name: 'Global Discount', type: 'number', min: 0, max: 0.45 },
-    { id: 'v7', name: 'Account Currency', type: 'text', frequencies: [
-        { label: 'USD', count: 14000 },
-        { label: 'EUR', count: 11000 },
-        { label: 'GBP', count: 2900 },
-        { label: 'JPY', count: 1400 },
-        { label: 'CAD', count: 1300 },
-        { label: 'AUD', count: 403 },
-    ] },
-    { id: 'v8', name: 'Account Description', type: 'text', isLargeText: true, avgChars: 2400 },
-    { id: 'v9', name: 'Account Fax', type: 'text' },
-    { id: 'v10', name: 'Account ID', type: 'text' },
-    { id: 'v11', name: 'Account Name', type: 'text' },
-    { id: 'v12', name: 'Account Phone', type: 'text' },
-    { id: 'v13', name: 'Account Source', type: 'text', frequencies: [
-        { label: 'Web', count: 9800 },
-        { label: 'Phone Inquiry', count: 7200 },
-        { label: 'Partner Referral', count: 3100 },
-        { label: 'Trade Show', count: 1800 },
-        { label: 'Other', count: 950 },
-    ] },
     { id: 'v14', name: 'Account Type', type: 'text', frequencies: [
         { label: 'Customer - Direct', count: 12500 },
         { label: 'Customer - Channel', count: 8200 },
         { label: 'Prospect', count: 4400 },
         { label: 'Other', count: 1100 },
     ] },
-    { id: 'v15', name: 'Billing City', type: 'text' },
     { id: 'v16', name: 'Billing Country', type: 'text', frequencies: [
         { label: 'United States', count: 15800 },
         { label: 'United Kingdom', count: 4200 },
@@ -53,13 +29,6 @@ const ACCOUNT_VARIABLES = [
         { label: 'Japan', count: 1700 },
         { label: 'Canada', count: 1200 },
     ] },
-    { id: 'v17', name: 'Billing State/Province', type: 'text' },
-    { id: 'v18', name: 'Billing Street', type: 'text' },
-    { id: 'v19', name: 'Billing Zip/Postal Code', type: 'text' },
-    { id: 'v20', name: 'Created Date', type: 'date', selected: true, action: 'Group by Day', min: '1/1/2013, 05:30 AM', max: '1/22/2025, 05:30 AM' },
-    { id: 'v21', name: 'Last Activity', type: 'date', selected: true, action: 'Group by Month', min: '4/12/2014, 05:30 AM', max: '6/29/2026, 05:30 AM' },
-    { id: 'v24', name: 'Last Modified Date', type: 'date', selected: true, action: 'Group by Month', min: '3/22/2018, 05:30 AM', max: '6/30/2026, 05:30 AM' },
-    { id: 'v25', name: 'System Modstamp', type: 'date', selected: true, action: 'Group by Month', min: '3/22/2018, 05:30 AM', max: '6/30/2026, 05:30 AM' },
     { id: 'v22', name: 'Industry', type: 'text', frequencies: [
         { label: 'Technology', count: 8400 },
         { label: 'Financial Services', count: 6200 },
@@ -68,9 +37,12 @@ const ACCOUNT_VARIABLES = [
         { label: 'Retail', count: 2500 },
         { label: 'Education', count: 1100 },
     ] },
-    { id: 'v23', name: 'Last Modified By ID', type: 'text' },
     { id: 'v26', name: 'Support Notes', type: 'text', isLargeText: true, avgChars: 3100 },
-    { id: 'v27', name: 'Sales Engagement Log', type: 'text', isLargeText: true, avgChars: 1850 },
+    { id: 'v8', name: 'Account Description', type: 'text', isLargeText: true, avgChars: 2400 },
+    { id: 'v20', name: 'Created Date', type: 'date', selected: true, action: 'Group by Day', min: '1/1/2013, 05:30 AM', max: '1/22/2025, 05:30 AM' },
+    { id: 'v21', name: 'Last Activity', type: 'date', selected: true, action: 'Group by Month', min: '4/12/2014, 05:30 AM', max: '6/29/2026, 05:30 AM' },
+    { id: 'v24', name: 'Last Modified Date', type: 'date', selected: true, action: 'Group by Month', min: '3/22/2018, 05:30 AM', max: '6/30/2026, 05:30 AM' },
+    { id: 'v25', name: 'System Modstamp', type: 'date', selected: true, action: 'Group by Month', min: '3/22/2018, 05:30 AM', max: '6/30/2026, 05:30 AM' },
 ];
 
 const DATA_MODEL_OBJECTS = [
@@ -111,7 +83,7 @@ export default class ClusterBuilder extends LightningElement {
         v25: 'Group by Month',
     };
     @track activeVariableId = null;
-    @track variantMode = 'a';
+    @track variantMode = 'f';
     @track variantPickerOpen = false;
     @track variantPickerSearch = '';
     @track variableTransformations = {
@@ -149,9 +121,9 @@ export default class ClusterBuilder extends LightningElement {
                 this.currentStep = stepParam;
             }
             const variantParam = (params.get('variant') || '').toLowerCase();
-            if (variantParam === 'a' || variantParam === 'b' || variantParam === 'b2' || variantParam === 'c' || variantParam === 'd') {
+            if (variantParam === 'f' || variantParam === 'g') {
                 this.variantMode = variantParam;
-                if ((variantParam === 'b' || variantParam === 'b2' || variantParam === 'd') && !this.activeVariableId) {
+                if (!this.activeVariableId) {
                     this.activeVariableId = ACCOUNT_VARIABLES[0].id;
                 }
             }
@@ -291,9 +263,9 @@ export default class ClusterBuilder extends LightningElement {
             if (v.isLargeText) iconName = 'utility:richtextindent';
             const action = this.variableActions[v.id] || null;
             const isExpanded = this.variantMode === 'c' && this.activeVariableId === v.id;
-            const isPickerActive = (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd') && this.effectiveActiveVariableId === v.id;
+            const isPickerActive = (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd' || this.variantMode === 'e' || this.variantMode === 'f' || this.variantMode === 'g') && this.effectiveActiveVariableId === v.id;
             let rowClass = 'var-row';
-            if (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd') rowClass += ' var-row_no-settings';
+            if (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd' || this.variantMode === 'e' || this.variantMode === 'f' || this.variantMode === 'g') rowClass += ' var-row_no-settings';
             if (isSelected) rowClass += ' var-row_selected';
             if (isExpanded) rowClass += ' var-row_expanded';
             if (isPickerActive) rowClass += ' var-row_picker-active';
@@ -347,13 +319,13 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     get isVariablePanelOpen() {
-        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd')) return true;
+        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd' || this.variantMode === 'e' || this.variantMode === 'f' || this.variantMode === 'g')) return true;
         if (this.currentStep === 3 && this.variantMode === 'c') return false;
         return !!this.activeVariable;
     }
 
     get effectiveActiveVariableId() {
-        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd')) {
+        if (this.currentStep === 3 && (this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd' || this.variantMode === 'e' || this.variantMode === 'f' || this.variantMode === 'g')) {
             return this.activeVariableId || ACCOUNT_VARIABLES[0].id;
         }
         return this.activeVariableId;
@@ -364,7 +336,10 @@ export default class ClusterBuilder extends LightningElement {
     get isVariantB2() { return this.variantMode === 'b2'; }
     get isVariantC() { return this.variantMode === 'c'; }
     get isVariantD() { return this.variantMode === 'd'; }
-    get isVariantBLike() { return this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd'; }
+    get isVariantE() { return this.variantMode === 'e'; }
+    get isVariantF() { return this.variantMode === 'f'; }
+    get isVariantG() { return this.variantMode === 'g'; }
+    get isVariantBLike() { return this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd' || this.variantMode === 'e' || this.variantMode === 'f' || this.variantMode === 'g'; }
     get hideSettingsColumn() { return this.isVariantBLike; }
     get showSettingsColumn() { return !this.isVariantBLike; }
     get variableNameAsLink() { return this.isVariantBLike; }
@@ -374,6 +349,9 @@ export default class ClusterBuilder extends LightningElement {
     get variantB2ChipClass() { return `variant-chip${this.isVariantB2 ? ' variant-chip_active' : ''}`; }
     get variantCChipClass() { return `variant-chip${this.isVariantC ? ' variant-chip_active' : ''}`; }
     get variantDChipClass() { return `variant-chip${this.isVariantD ? ' variant-chip_active' : ''}`; }
+    get variantEChipClass() { return `variant-chip${this.isVariantE ? ' variant-chip_active' : ''}`; }
+    get variantFChipClass() { return `variant-chip${this.isVariantF ? ' variant-chip_active' : ''}`; }
+    get variantGChipClass() { return `variant-chip${this.isVariantG ? ' variant-chip_active' : ''}`; }
 
     get variantPickerOptions() {
         const term = (this.variantPickerSearch || '').toLowerCase();
@@ -497,6 +475,277 @@ export default class ClusterBuilder extends LightningElement {
     get showDMonthSample() { return this.isVariantD && this.activeTransformation === 'group-by-month'; }
     get showDTextSample() { return this.isVariantD && this.activeTransformation === 'text-clustering'; }
     get showDAnySample() { return this.showDReplaceSample || this.showDDaySample || this.showDMonthSample || this.showDTextSample; }
+
+    // Variant E — always-on preview. Defaults to the first applicable
+    // transformation for the variable type when the user hasn't picked one.
+    get effectiveETransformation() {
+        const t = this.activeTransformation;
+        if (t && t !== 'none') return t;
+        const v = this.activeVariable;
+        if (!v) return 'replace-missing';
+        if (v.type === 'text') return 'text-clustering';
+        if (v.type === 'date') return 'group-by-day';
+        return 'replace-missing';
+    }
+    get showEReplaceSample() { return this.isVariantE && this.effectiveETransformation === 'replace-missing'; }
+    get showEDaySample() { return this.isVariantE && this.effectiveETransformation === 'group-by-day'; }
+    get showEMonthSample() { return this.isVariantE && this.effectiveETransformation === 'group-by-month'; }
+    get showETextSample() { return this.isVariantE && this.effectiveETransformation === 'text-clustering'; }
+    get showEAnySample() { return this.isVariantE; }
+    get showEChartSample() { return this.isVariantE; }
+
+    // Variant F — SLDS-only preview. Reuses effectiveETransformation for defaults.
+    get effectiveFTransformation() {
+        const t = this.activeTransformation;
+        if (t && t !== 'none') return t;
+        const v = this.activeVariable;
+        if (!v) return 'replace-missing';
+        if (v.type === 'text') return 'text-clustering';
+        if (v.type === 'date') return 'group-by-day';
+        return 'replace-missing';
+    }
+    get showFReplaceSample() { return this.isVariantF && this.effectiveFTransformation === 'replace-missing'; }
+    get showFDaySample() { return this.isVariantF && this.effectiveFTransformation === 'group-by-day'; }
+    get showFMonthSample() { return this.isVariantF && this.effectiveFTransformation === 'group-by-month'; }
+    get showFTextSample() { return this.isVariantF && this.effectiveFTransformation === 'text-clustering'; }
+    get showFAnySample() { return this.isVariantF; }
+    get fRawTitle() {
+        if (this.showFReplaceSample) return 'Raw distribution';
+        if (this.showFDaySample || this.showFMonthSample) return 'Raw distribution';
+        if (this.showFTextSample) return 'Top raw values';
+        return '';
+    }
+    get fAfterTitle() {
+        if (this.showFReplaceSample) return 'After transformation';
+        if (this.showFDaySample) return 'After Group by Day';
+        if (this.showFMonthSample) return 'After Group by Month';
+        if (this.showFTextSample) return 'After Text Clustering';
+        return '';
+    }
+
+    // SLDS-only preview rows. Each row has label, value (0-100 for progress-bar),
+    // displayValue for the trailing text, and an optional accent variant.
+    _fRows(rows, domainMax) {
+        const max = domainMax || Math.max(...rows.map((r) => r.raw));
+        return rows.map((r) => ({
+            id: r.id,
+            label: r.label,
+            display: r.display,
+            value: Math.max(1, Math.round((r.raw / max) * 100)),
+            variant: r.variant || 'base',
+        }));
+    }
+
+    get fRawReplaceRows() {
+        return this._fRows([
+            { id: 'fr-p', label: 'Present', raw: 82, display: '82%' },
+            { id: 'fr-m', label: 'Missing', raw: 18, display: '18%', variant: 'warning' },
+        ], 100);
+    }
+
+    get fAfterReplace() {
+        return {
+            originalPct: 82,
+            imputedPct: 18,
+            originalLabel: '82% original',
+            imputedLabel: '18% imputed',
+        };
+    }
+
+    get fRawDayRows() {
+        return this._fRows([
+            { id: 'frd1', label: 'Mon 04', raw: 620, display: '620' },
+            { id: 'frd2', label: 'Tue 05', raw: 810, display: '810' },
+            { id: 'frd3', label: 'Wed 06', raw: 1100, display: '1.1K' },
+            { id: 'frd4', label: 'Thu 07', raw: 740, display: '740' },
+            { id: 'frd5', label: 'Fri 08', raw: 990, display: '990' },
+            { id: 'frd6', label: 'Sat 09', raw: 350, display: '350' },
+            { id: 'frd7', label: 'Sun 10', raw: 280, display: '280' },
+        ]);
+    }
+    get fAfterDayRows() {
+        return this._fRows([
+            { id: 'fad1', label: 'Mon 04', raw: 620, display: '620' },
+            { id: 'fad2', label: 'Tue 05', raw: 810, display: '810' },
+            { id: 'fad3', label: 'Wed 06', raw: 1100, display: '1.1K' },
+            { id: 'fad4', label: 'Thu 07', raw: 740, display: '740' },
+            { id: 'fad5', label: 'Fri 08', raw: 990, display: '990' },
+            { id: 'fad6', label: 'Sat 09', raw: 350, display: '350' },
+            { id: 'fad7', label: 'Sun 10', raw: 280, display: '280' },
+        ]);
+    }
+
+    get fRawMonthRows() {
+        return this._fRows([
+            { id: 'frm1', label: 'Jan', raw: 12000, display: '12K' },
+            { id: 'frm2', label: 'Feb', raw: 16500, display: '16.5K' },
+            { id: 'frm3', label: 'Mar', raw: 21800, display: '21.8K' },
+            { id: 'frm4', label: 'Apr', raw: 26400, display: '26.4K' },
+            { id: 'frm5', label: 'May', raw: 18700, display: '18.7K' },
+            { id: 'frm6', label: 'Jun', raw: 13500, display: '13.5K' },
+        ]);
+    }
+    get fAfterMonthRows() {
+        return this._fRows([
+            { id: 'fam1', label: 'Jan', raw: 12000, display: '12K' },
+            { id: 'fam2', label: 'Feb', raw: 16500, display: '16.5K' },
+            { id: 'fam3', label: 'Mar', raw: 21800, display: '21.8K' },
+            { id: 'fam4', label: 'Apr', raw: 26400, display: '26.4K' },
+            { id: 'fam5', label: 'May', raw: 18700, display: '18.7K' },
+            { id: 'fam6', label: 'Jun', raw: 13500, display: '13.5K' },
+        ]);
+    }
+
+    get fRawTextRows() {
+        return this._fRows([
+            { id: 'frt1', label: '"missing item"', raw: 142, display: '142' },
+            { id: 'frt2', label: '"refund pls"', raw: 96, display: '96' },
+            { id: 'frt3', label: '"wrong size"', raw: 74, display: '74' },
+            { id: 'frt4', label: '"not delivered"', raw: 58, display: '58' },
+            { id: 'frt5', label: '"login help"', raw: 44, display: '44' },
+        ]);
+    }
+    get fAfterTextRows() {
+        return this._fRows([
+            { id: 'fat1', label: 'Renewal question', raw: 32, display: '32%' },
+            { id: 'fat2', label: 'Product issue', raw: 24, display: '24%' },
+            { id: 'fat3', label: 'Billing dispute', raw: 18, display: '18%' },
+            { id: 'fat4', label: 'Onboarding help', raw: 14, display: '14%' },
+            { id: 'fat5', label: 'Other', raw: 12, display: '12%' },
+        ], 100);
+    }
+
+    // Variant G — vertical mini bars, Before / After side-by-side.
+    get effectiveGTransformation() {
+        const t = this.activeTransformation;
+        if (t && t !== 'none') return t;
+        const v = this.activeVariable;
+        if (!v) return 'replace-missing';
+        if (v.type === 'text') return 'text-clustering';
+        if (v.type === 'date') return 'group-by-day';
+        return 'replace-missing';
+    }
+    get showGReplaceSample() { return this.isVariantG && this.effectiveGTransformation === 'replace-missing'; }
+    get showGDaySample() { return this.isVariantG && this.effectiveGTransformation === 'group-by-day'; }
+    get showGMonthSample() { return this.isVariantG && this.effectiveGTransformation === 'group-by-month'; }
+    get showGTextSample() { return this.isVariantG && this.effectiveGTransformation === 'text-clustering'; }
+    get showGAnySample() { return this.isVariantG; }
+
+    get gBeforeCaption() {
+        if (this.showGReplaceSample) return '18% of rows missing a value';
+        if (this.showGDaySample) return 'Raw dates — thousands of unique values';
+        if (this.showGMonthSample) return 'Raw dates — thousands of unique values';
+        if (this.showGTextSample) return 'Free-text — every response unique';
+        return '';
+    }
+    get gAfterCaption() {
+        if (this.showGReplaceSample) return 'Filled with average per industry';
+        if (this.showGDaySample) return 'Grouped by day';
+        if (this.showGMonthSample) return 'Grouped by month';
+        if (this.showGTextSample) return 'Clustered into 5 categories';
+        return '';
+    }
+
+    // Risk copy — per-transformation, shared by Variant F and G skip warnings.
+    _riskCopyFor(transformation) {
+        switch (transformation) {
+            case 'replace-missing':
+                return 'Skipping drops 18% of rows from training and can bias the model toward the majority segment.';
+            case 'group-by-day':
+                return 'Skipping keeps thousands of unique dates — the model treats each day as its own category and overfits.';
+            case 'group-by-month':
+                return 'Skipping keeps thousands of unique dates — the model treats each day as its own category and overfits.';
+            case 'text-clustering':
+                return 'Skipping keeps every free-text response unique — the model has no signal to learn from.';
+            default:
+                return '';
+        }
+    }
+    get fSkipRisk() { return this.isVariantF ? this._riskCopyFor(this.effectiveFTransformation) : ''; }
+    get gSkipRisk() { return this.isVariantG ? this._riskCopyFor(this.effectiveGTransformation) : ''; }
+    get showFSkipRisk() { return !!this.fSkipRisk; }
+    get showGSkipRisk() { return !!this.gSkipRisk; }
+
+    _gBar(id, heightPct, state) {
+        // state: 'normal' | 'missing' | 'filled'
+        const cls = state === 'missing'
+            ? 'g-bar g-bar_missing'
+            : state === 'filled'
+                ? 'g-bar g-bar_filled'
+                : 'g-bar';
+        return { id, style: `height: ${heightPct}%`, cls };
+    }
+
+    // --- Replace missing: same shape both sides; 2 bars hatched Before, green After ---
+    get gReplaceBefore() {
+        return [
+            this._gBar('r1', 45, 'normal'),
+            this._gBar('r2', 72, 'normal'),
+            this._gBar('r3', 60, 'missing'),
+            this._gBar('r4', 55, 'normal'),
+            this._gBar('r5', 82, 'normal'),
+            this._gBar('r6', 60, 'missing'),
+            this._gBar('r7', 68, 'normal'),
+            this._gBar('r8', 40, 'normal'),
+        ];
+    }
+    get gReplaceAfter() {
+        return [
+            this._gBar('a1', 45, 'normal'),
+            this._gBar('a2', 72, 'normal'),
+            this._gBar('a3', 60, 'filled'),
+            this._gBar('a4', 55, 'normal'),
+            this._gBar('a5', 82, 'normal'),
+            this._gBar('a6', 60, 'filled'),
+            this._gBar('a7', 68, 'normal'),
+            this._gBar('a8', 40, 'normal'),
+        ];
+    }
+
+    // --- Date group-by-day: many spiky bars Before → smoother pattern After ---
+    get gDayBefore() {
+        return [12, 8, 22, 6, 30, 14, 4, 18, 10, 26, 8, 20].map((h, i) => this._gBar(`db${i}`, h * 3, 'normal'));
+    }
+    get gDayAfter() {
+        return [45, 60, 82, 55, 70, 25, 20].map((h, i) => this._gBar(`da${i}`, h, 'normal'));
+    }
+
+    // --- Date group-by-month: same idea, fewer bars After ---
+    get gMonthBefore() {
+        return [12, 8, 22, 6, 30, 14, 4, 18, 10, 26, 8, 20].map((h, i) => this._gBar(`mb${i}`, h * 3, 'normal'));
+    }
+    get gMonthAfter() {
+        return [40, 55, 72, 88, 62, 45].map((h, i) => this._gBar(`ma${i}`, h, 'normal'));
+    }
+
+    // --- Text clustering: scattered Before → grouped After ---
+    get gTextBefore() {
+        return [22, 30, 18, 24, 28, 20, 16, 26, 22, 30].map((h, i) => this._gBar(`tb${i}`, h * 2.5, 'normal'));
+    }
+    get gTextAfter() {
+        return [64, 48, 36, 28, 24].map((h, i) => this._gBar(`ta${i}`, h, 'normal'));
+    }
+    get eSampleTitle() {
+        if (this.showEReplaceSample) return 'Missing values will be filled per group';
+        if (this.showEDaySample) return 'Dates will be grouped by day';
+        if (this.showEMonthSample) return 'Dates will be grouped by month';
+        if (this.showETextSample) return 'Free text will collapse into categories';
+        return '';
+    }
+    get eRawTitle() {
+        if (this.showEReplaceSample) return 'Raw distribution';
+        if (this.showEDaySample) return 'Raw distribution';
+        if (this.showEMonthSample) return 'Raw distribution';
+        if (this.showETextSample) return 'Top raw values';
+        return '';
+    }
+    get eAfterTitle() {
+        if (this.showEReplaceSample) return 'After transformation';
+        if (this.showEDaySample) return 'After Group by Day';
+        if (this.showEMonthSample) return 'After Group by Month';
+        if (this.showETextSample) return 'After Text Clustering';
+        return '';
+    }
     get dSampleTitle() {
         if (this.showDReplaceSample) return 'Missing values will be filled per group';
         if (this.showDDaySample) return 'Dates will be grouped by day';
@@ -612,16 +861,30 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     get dReplaceEclair() {
-        // Before / After stacked as two rows in the same chart
+        // Before / After stacked as two rows in the same chart — 0–100% axis
         const rows = [
             { id: 'r-before', label: 'Before', value: 82, tone: 'secondary', display: '82% filled' },
             { id: 'r-after', label: 'After', value: 100, tone: 'primary', display: '100% filled' },
         ];
-        return this._toEclairRows(rows, '');
+        return this._toEclairRows(rows, '', 100);
     }
 
-    _toEclairRows(rows, suffix) {
-        const max = Math.max(...rows.map((r) => r.value));
+    get dReplaceStacked() {
+        // Single stacked bar for the After chart: 82% original (solid) +
+        // 18% imputed (tinted-navy hatched, so the bar reads as one variable).
+        return {
+            label: 'Filled',
+            originalStyle: 'width: 82%',
+            imputedStyle: 'width: 18%',
+            originalLabel: '82%',
+            imputedLabel: '18%',
+            legendOriginal: 'Original values',
+            legendImputed: 'Imputed with class mean',
+        };
+    }
+
+    _toEclairRows(rows, suffix, domainMax) {
+        const max = domainMax || Math.max(...rows.map((r) => r.value));
         return rows.map((r) => ({
             ...r,
             barStyle: `width: ${Math.max(2, (r.value / max) * 100)}%`,
@@ -648,6 +911,97 @@ export default class ClusterBuilder extends LightningElement {
             { id: 't3', label: '75%' },
             { id: 't4', label: '100%' },
         ];
+    }
+
+    // ---- Raw data previews (before transformation) ----
+    // Blog says the Settings panel shows raw distribution; the transformation
+    // effect chart shows post-transformation. Both live side-by-side in E.
+    get rawReplaceEclair() {
+        // Raw distribution for a number field with missing values —
+        // shown as a "% present" bar for the source variable.
+        const rows = [
+            { id: 'raw-present', label: 'Present', value: 82, tone: 'secondary', display: '82%' },
+            { id: 'raw-missing', label: 'Missing', value: 18, tone: 'muted', display: '18%' },
+        ];
+        return this._toEclairRows(rows, '', 100);
+    }
+
+    // Class-based mean imputation preview — dot plot on a number line per class.
+    // Present rows are solid dots at their value. The class mean is a vertical
+    // line. Missing rows show as an open (hollow) dot at the mean position.
+    // Domain is a shared 0–$15M axis so class differences are visible.
+    get eImputationPlot() {
+        const domainMax = 15; // $M
+        const pct = (v) => (v / domainMax) * 100;
+        const leftStyle = (p) => `left: ${p.toFixed(2)}%;`;
+        return {
+            axisLabels: [
+                { id: 'ax0', label: '$0', style: leftStyle(0) },
+                { id: 'ax5', label: '$5M', style: leftStyle(pct(5)) },
+                { id: 'ax10', label: '$10M', style: leftStyle(pct(10)) },
+                { id: 'ax15', label: '$15M', style: leftStyle(100) },
+            ],
+            groups: [
+                {
+                    id: 'g-tech',
+                    klass: 'Technology',
+                    meanStyle: leftStyle(pct(10)),
+                    meanLabel: '$10M',
+                    dots: [
+                        { id: 'd-t1', style: leftStyle(pct(12)), value: '$12M', cls: 'imp-dot imp-dot_present' },
+                        { id: 'd-t2', style: leftStyle(pct(8)), value: '$8M', cls: 'imp-dot imp-dot_present' },
+                        { id: 'd-t3', style: leftStyle(pct(10)), value: 'filled', cls: 'imp-dot imp-dot_filled' },
+                    ],
+                },
+                {
+                    id: 'g-retail',
+                    klass: 'Retail',
+                    meanStyle: leftStyle(pct(2.5)),
+                    meanLabel: '$2.5M',
+                    dots: [
+                        { id: 'd-r1', style: leftStyle(pct(3)), value: '$3M', cls: 'imp-dot imp-dot_present' },
+                        { id: 'd-r2', style: leftStyle(pct(2)), value: '$2M', cls: 'imp-dot imp-dot_present' },
+                        { id: 'd-r3', style: leftStyle(pct(2.5)), value: 'filled', cls: 'imp-dot imp-dot_filled' },
+                    ],
+                },
+            ],
+        };
+    }
+    get eImputationGroups() { return this.eImputationPlot.groups; }
+    get eImputationAxis() { return this.eImputationPlot.axisLabels; }
+
+    get rawDayEclair() {
+        // Raw dates before grouping — sparse per-day counts across a week.
+        const rows = [
+            { id: 'rd1', label: 'Mon 04', value: 620, tone: 'secondary' },
+            { id: 'rd2', label: 'Tue 05', value: 810, tone: 'secondary' },
+            { id: 'rd3', label: 'Wed 06', value: 1120, tone: 'secondary' },
+            { id: 'rd4', label: 'Thu 07', value: 740, tone: 'secondary' },
+            { id: 'rd5', label: 'Fri 08', value: 990, tone: 'secondary' },
+            { id: 'rd6', label: 'Sat 09', value: 350, tone: 'secondary' },
+            { id: 'rd7', label: 'Sun 10', value: 280, tone: 'secondary' },
+        ];
+        return this._toEclairRows(rows, '');
+    }
+
+    get rawMonthEclair() {
+        // Raw dates before month-grouping — same raw daily density as day view,
+        // showing what the transformation is collapsing.
+        return this.rawDayEclair;
+    }
+
+    get rawTextEclair() {
+        // Raw text distribution — top verbatim strings by frequency.
+        // Note: the blog notes this is a Zipf-like long tail; we show the head.
+        const rows = [
+            { id: 'rt1', label: '"missing item"', value: 142, tone: 'secondary' },
+            { id: 'rt2', label: '"where is my order"', value: 118, tone: 'secondary' },
+            { id: 'rt3', label: '"refund pls"', value: 96, tone: 'secondary' },
+            { id: 'rt4', label: '"cant log in"', value: 74, tone: 'secondary' },
+            { id: 'rt5', label: '"great service"', value: 62, tone: 'secondary' },
+            { id: 'rt6', label: '"other"', value: 40, tone: 'secondary' },
+        ];
+        return this._toEclairRows(rows, '');
     }
 
     get replaceWithOptions() {
@@ -894,7 +1248,7 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     handleCloseVariablePanel() {
-        if ((this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd') && this.currentStep === 3) return;
+        if ((this.variantMode === 'b' || this.variantMode === 'b2' || this.variantMode === 'd' || this.variantMode === 'e' || this.variantMode === 'f' || this.variantMode === 'g') && this.currentStep === 3) return;
         this.activeVariableId = null;
     }
 
@@ -903,7 +1257,7 @@ export default class ClusterBuilder extends LightningElement {
         if (!mode || mode === this.variantMode) return;
         this.variantMode = mode;
         this.variantPickerOpen = false;
-        if (mode === 'b' || mode === 'b2' || mode === 'd') {
+        if (mode === 'b' || mode === 'b2' || mode === 'd' || mode === 'e') {
             if (!this.activeVariableId) {
                 this.activeVariableId = ACCOUNT_VARIABLES[0].id;
             }
