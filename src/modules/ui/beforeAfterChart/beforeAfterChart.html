@@ -1,0 +1,102 @@
+<template>
+    <div class="bac-root">
+        <!-- Raw card -->
+        <article class="f-card f-card_raw">
+            <header class="f-card__header">
+                <span class="f-card__title">{rawTitle}</span>
+                <lightning-badge label={rawBadgeLabel}></lightning-badge>
+            </header>
+            <div class="f-card__body">
+                <div class="eclair-chart eclair-chart_bare">
+                    <div class="eclair-chart-body">
+                        <div class="eclair-chart-axis">
+                            <span class="eclair-axis-spacer"></span>
+                            <div class="eclair-axis-ticks">
+                                <template for:each={axisTicks} for:item="t">
+                                    <span key={t.id} class="eclair-tick">{t.label}</span>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="eclair-chart-plot">
+                            <template for:each={resolvedRawRows} for:item="row">
+                                <div key={row.id} class="eclair-row">
+                                    <span class="eclair-row-label">{row.label}</span>
+                                    <div class="eclair-row-track">
+                                        <div class={row.barClass} style={row.barStyle}>
+                                            <span class="eclair-row-value">{row.displayValue}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <div class="slds-align_absolute-center slds-m-vertical_xx-small">
+            <lightning-icon icon-name="utility:down" size="x-small" variant="bare" alternative-text="Transforms to"></lightning-icon>
+        </div>
+
+        <!-- After card -->
+        <article class="f-card f-card_after">
+            <header class="f-card__header">
+                <span class="f-card__title">{afterTitle}</span>
+                <lightning-badge label={afterBadgeLabel} class="f-badge_example"></lightning-badge>
+            </header>
+            <div class="f-card__body">
+                <div class="eclair-chart eclair-chart_bare">
+                    <div class="eclair-chart-body">
+                        <div class="eclair-chart-axis">
+                            <span class="eclair-axis-spacer"></span>
+                            <div class="eclair-axis-ticks">
+                                <template for:each={axisTicks} for:item="t">
+                                    <span key={t.id} class="eclair-tick">{t.label}</span>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="eclair-chart-plot">
+                            <template lwc:if={showStackedAfter}>
+                                <div class="eclair-row">
+                                    <span class="eclair-row-label">{stackedAfter.label}</span>
+                                    <div class="eclair-row-track">
+                                        <div class="eclair-bar-stack eclair-bar-stack_tinted">
+                                            <div class="eclair-bar-seg eclair-bar-seg_original" style={stackedAfter.originalStyle}>
+                                                <span class="eclair-bar-seg-label">{stackedAfter.originalLabel}</span>
+                                            </div>
+                                            <div class="eclair-bar-seg eclair-bar-seg_imputed-tinted" style={stackedAfter.imputedStyle}>
+                                                <span class="eclair-bar-seg-label">{stackedAfter.imputedLabel}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="f-stack-legend">
+                                    <span class="f-stack-legend-item">
+                                        <span class="f-stack-legend-swatch f-stack-legend-swatch_original"></span>
+                                        {stackedAfter.legendOriginal}
+                                    </span>
+                                    <span class="f-stack-legend-item">
+                                        <span class="f-stack-legend-swatch f-stack-legend-swatch_imputed"></span>
+                                        {stackedAfter.legendImputed}
+                                    </span>
+                                </div>
+                            </template>
+                            <template lwc:else>
+                                <template for:each={resolvedAfterRows} for:item="row">
+                                    <div key={row.id} class="eclair-row">
+                                        <span class="eclair-row-label">{row.label}</span>
+                                        <div class="eclair-row-track">
+                                            <div class={row.barClass} style={row.barStyle}>
+                                                <span class="eclair-row-value">{row.displayValue}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</template>
