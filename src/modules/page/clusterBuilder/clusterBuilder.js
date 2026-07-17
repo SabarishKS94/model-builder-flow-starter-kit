@@ -105,6 +105,7 @@ export default class ClusterBuilder extends LightningElement {
     @track isTraining = false;
     @track isAgentforceOpen = false;
     @track isLocked = import.meta.env.VITE_LOCKED === '1';
+    @track isShelfMode = false;
 
     connectedCallback() {
         try {
@@ -120,6 +121,7 @@ export default class ClusterBuilder extends LightningElement {
             if (!isNaN(stepParam) && stepParam >= 1 && stepParam <= 5) {
                 this.currentStep = stepParam;
             }
+            this.isShelfMode = params.get('mode') === 'shelf';
             const variantParam = (params.get('variant') || '').toLowerCase();
             if (variantParam === 'f' || variantParam === 'g') {
                 this.variantMode = variantParam;
@@ -352,6 +354,7 @@ export default class ClusterBuilder extends LightningElement {
     get variantEChipClass() { return `variant-chip${this.isVariantE ? ' variant-chip_active' : ''}`; }
     get variantFChipClass() { return `variant-chip${this.isVariantF ? ' variant-chip_active' : ''}`; }
     get variantGChipClass() { return `variant-chip${this.isVariantG ? ' variant-chip_active' : ''}`; }
+    get showVariantSwitcher() { return !this.isShelfMode; }
 
     get variantPickerOptions() {
         const term = (this.variantPickerSearch || '').toLowerCase();
