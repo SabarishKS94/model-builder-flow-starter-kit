@@ -128,7 +128,8 @@ export default class ClusterBuilder extends LightningElement {
             if (variantParam === 'f' || variantParam === 'g') {
                 this.variantMode = variantParam;
                 if (!this.activeVariableId) {
-                    this.activeVariableId = ACCOUNT_VARIABLES[0].id;
+                    this.activeVariableId =
+                        variantParam === 'g' ? 'v14' : ACCOUNT_VARIABLES[0].id;
                 }
             }
             if (params.get('locked') === '1') {
