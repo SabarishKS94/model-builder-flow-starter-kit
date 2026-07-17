@@ -1,5 +1,4 @@
 import { LightningElement, track } from 'lwc';
-import { navigate } from '../../../router';
 import * as Labels from 'data/labels/ClusterBuilder';
 import DataViewerModal from 'ui/dataViewerModal';
 import { navigate } from '../../../router';
