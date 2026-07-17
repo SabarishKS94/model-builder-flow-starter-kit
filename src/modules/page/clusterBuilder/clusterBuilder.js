@@ -1,4 +1,5 @@
 import { LightningElement, track } from 'lwc';
+import { navigate } from '../../../router';
 import * as Labels from 'data/labels/ClusterBuilder';
 import DataViewerModal from 'ui/dataViewerModal';
 
@@ -809,7 +810,7 @@ export default class ClusterBuilder extends LightningElement {
     }
 
     handleBack() {
-        window.location.href = '/app/aim-cluster';
+        navigate('/app/aim-cluster');
     }
 
     handleToggleAgentforce() {
