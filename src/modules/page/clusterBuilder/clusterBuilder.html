@@ -1577,6 +1577,26 @@
                                         </p>
                                     </div>
                                 </template>
+                                <template lwc:if={showTextFrequencyChart}>
+                                    <hr class="var-panel-divider" />
+                                    <div class="var-panel-distribution">
+                                        <h4 class="var-panel-distribution-title">{labels.DistributionLabel}</h4>
+                                        <div class="var-freq-chart">
+                                            <div class="var-freq-axis">
+                                                <span class="var-freq-axis-label">{labels.CountAxisLabel}</span>
+                                            </div>
+                                            <template for:each={textFrequencies} for:item="row">
+                                                <div key={row.label} class="var-freq-row">
+                                                    <span class="var-freq-label">{row.label}</span>
+                                                    <div class="var-freq-bar-wrap">
+                                                        <div class="var-freq-bar" style={row.barStyle}></div>
+                                                        <span class="var-freq-count">{row.count}</span>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
                         </template>
                         <template lwc:elseif={isVariantG}>

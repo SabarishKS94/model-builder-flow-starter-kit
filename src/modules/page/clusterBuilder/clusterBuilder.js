@@ -670,7 +670,7 @@ export default class ClusterBuilder extends LightningElement {
     get fSkipRisk() { return this.isVariantF ? this._riskCopyFor(this.effectiveFTransformation) : ''; }
     get gSkipRisk() { return this.isVariantG ? this._riskCopyFor(this.effectiveGTransformation) : ''; }
     get showFSkipRisk() { return !!this.fSkipRisk; }
-    get showGSkipRisk() { return !!this.gSkipRisk; }
+    get showGSkipRisk() { return !this.isShelfMode && !!this.gSkipRisk; }
 
     _gBar(id, heightPct, state) {
         // state: 'normal' | 'missing' | 'filled'
