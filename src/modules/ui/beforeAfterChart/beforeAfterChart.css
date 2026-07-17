@@ -1,0 +1,271 @@
+:host {
+    display: block;
+}
+
+.bac-root {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Eclair chart primitives (extracted from clusterBuilder) --- */
+.eclair-chart {
+    --eclair-bar-primary: #02174c;
+    --eclair-bar-secondary: #0250d9;
+    --eclair-gridline: #e5e5e5;
+    --eclair-tick-color: #747474;
+    --eclair-label-color: #5c5c5c;
+    --eclair-label-gap: 10px;
+    margin-top: 8px;
+    padding: 8px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.eclair-chart-body {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: var(--eclair-label-gap);
+    row-gap: 1px;
+    align-items: center;
+}
+
+.eclair-chart-axis {
+    display: contents;
+}
+
+.eclair-axis-ticks {
+    align-self: end;
+    position: relative;
+    height: 14px;
+}
+
+.eclair-axis-spacer {
+    display: block;
+    height: 14px;
+}
+
+.eclair-tick {
+    position: absolute;
+    top: 0;
+    font-size: 10px;
+    color: var(--eclair-tick-color);
+    line-height: 12px;
+    white-space: nowrap;
+    transform: translateX(-50%);
+}
+
+.eclair-tick:nth-child(1) { left: 0%; transform: none; }
+.eclair-tick:nth-child(2) { left: 25%; }
+.eclair-tick:nth-child(3) { left: 50%; }
+.eclair-tick:nth-child(4) { left: 75%; }
+.eclair-tick:nth-child(5) { left: 100%; transform: translateX(-100%); }
+
+.eclair-chart-plot {
+    display: contents;
+}
+
+.eclair-row {
+    display: contents;
+}
+
+.eclair-row-label {
+    min-height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 11px;
+    color: var(--slds-g-color-on-surface-1, #181818);
+    line-height: 14px;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.eclair-row-track {
+    position: relative;
+    height: 22px;
+    background:
+        linear-gradient(to right,
+            transparent 0,
+            transparent calc(25% - 1px),
+            var(--eclair-gridline) calc(25% - 1px),
+            var(--eclair-gridline) 25%,
+            transparent 25%,
+            transparent calc(50% - 1px),
+            var(--eclair-gridline) calc(50% - 1px),
+            var(--eclair-gridline) 50%,
+            transparent 50%,
+            transparent calc(75% - 1px),
+            var(--eclair-gridline) calc(75% - 1px),
+            var(--eclair-gridline) 75%,
+            transparent 75%);
+    border-left: 1px solid var(--eclair-gridline);
+    border-right: 1px solid var(--eclair-gridline);
+}
+
+.eclair-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 6px;
+    min-width: 12px;
+    border-radius: 0;
+}
+
+.eclair-bar_primary {
+    background: var(--eclair-bar-primary);
+}
+
+.eclair-bar_secondary {
+    background: var(--eclair-bar-secondary);
+}
+
+.eclair-row-value {
+    font-size: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 12px;
+    white-space: nowrap;
+}
+
+.eclair-chart_bare {
+    margin-top: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* --- Stacked segment bar (Replace Missing After) --- */
+.eclair-bar-stack {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.eclair-bar-seg {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 6px;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.eclair-bar-seg_original {
+    background: #3b5fa8;
+    color: #ffffff;
+}
+
+.eclair-bar-seg_imputed-tinted {
+    background: #8ea6d1;
+    color: #ffffff;
+    border-left: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.eclair-bar-seg-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #ffffff;
+}
+
+/* --- Card chrome --- */
+.f-card {
+    display: block;
+    border: 1px solid #d4d4d8;
+    border-radius: 6px;
+    background: var(--slds-g-color-surface-1, #ffffff);
+    overflow: hidden;
+}
+
+.f-card_raw .eclair-bar_primary,
+.f-card_raw .eclair-bar_secondary {
+    background: var(--slds-g-color-brand-base-60, #0176d3);
+}
+
+.f-card_after .eclair-bar_primary,
+.f-card_after .eclair-bar_secondary {
+    background: var(--slds-g-color-brand-base-40, #014486);
+}
+
+.f-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ebebeb;
+    background: transparent;
+}
+
+.f-card__title {
+    font-size: 12px;
+    font-weight: 400;
+    font-style: italic;
+    color: #5c5c5c;
+    letter-spacing: 0;
+}
+
+.f-card__body {
+    padding: 10px 12px 12px;
+}
+
+.f-stack-legend {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #5c5c5c;
+}
+
+.f-stack-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.f-stack-legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.f-stack-legend-swatch_original {
+    background: #3b5fa8;
+}
+
+.f-stack-legend-swatch_imputed {
+    background: #8ea6d1;
+}
+
+.f-card lightning-badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.f-card .f-badge_example {
+    --slds-c-badge-color-background: #02174c;
+    --slds-c-badge-color-border: #02174c;
+    --slds-c-badge-text-color: #ffffff;
+}
+
+.f-badge_example {
+    --slds-c-badge-color-background: #02174c;
+    --slds-c-badge-text-color: #ffffff;
+}

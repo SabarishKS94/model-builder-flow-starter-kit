@@ -295,9 +295,7 @@ export default class App extends LightningElement {
     }
 
     _promptForApiKeyIfNeeded() {
-        if (!hasApiKey()) {
-            this._openApiKeyModal();
-        }
+        // Suppressed for prototype demo — Agentforce chat is disabled without a key.
     }
 
     handleNavigateBack() {
