@@ -109,14 +109,16 @@ export default class ClusterBuilder extends LightningElement {
 
     connectedCallback() {
         try {
-            let queryString = window.location.search || '';
-            if (!queryString && window.location.hash) {
+            const params = new URLSearchParams(window.location.search || '');
+            if (window.location.hash) {
                 const hashQueryIdx = window.location.hash.indexOf('?');
                 if (hashQueryIdx !== -1) {
-                    queryString = window.location.hash.slice(hashQueryIdx);
+                    const hashParams = new URLSearchParams(window.location.hash.slice(hashQueryIdx));
+                    hashParams.forEach((value, key) => {
+                        if (!params.has(key)) params.set(key, value);
+                    });
                 }
             }
-            const params = new URLSearchParams(queryString);
             const stepParam = parseInt(params.get('step'), 10);
             if (!isNaN(stepParam) && stepParam >= 1 && stepParam <= 5) {
                 this.currentStep = stepParam;
